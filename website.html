@@ -183,6 +183,7 @@ select{background:var(--surface);border:1.5px solid var(--line);border-radius:va
 .primary.sm{padding:7px 16px;font-size:.92rem;border-radius:var(--r)}
 .dot{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 6px;margin-left:8px;border-radius:var(--r);background:var(--opp);color:#150E26;font:700 .8rem var(--body);vertical-align:middle}
 .dot[hidden]{display:none}
+.mbtn[hidden]{display:none}
 .frow{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
 .frow .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis}
 .frow .rt2{color:var(--muted);font-size:.9rem;font-variant-numeric:tabular-nums}
@@ -395,7 +396,6 @@ const QUESTIONS = [
   {q:"A physicist from India developed a statistical description of particles with integer spin. His work, sent to Albert Einstein, became foundational to quantum mechanics. Identify him.", options:["Meghnad Saha", "Subrahmanyan Chandrasekhar", "Homi J. Bhabha", "Satyendra Nath Bose"], answer:3, category:"Science & Tech"},
   {q:"A Swedish engineer and inventor accumulated wealth through inventions involving explosives. His will established annual prizes recognising achievements in science, literature and peace. Identify him.", options:["Alfred Nobel", "Gustaf Dalén", "Anders Celsius", "Jöns Jacob Berzelius"], answer:0, category:"Science & Tech"},
   {q:"A nineteenth-century writer’s notes described a proposed mechanical computing device. Her commentary included a method often considered an early computer program, and she anticipated machines manipulating symbols beyond numbers. Identify her.", options:["Grace Hopper", "Ada Lovelace", "Mary Somerville", "Hedy Lamarr"], answer:1, category:"Science & Tech"},
-  {q:"A computer scientist proposed a test asking whether a machine could imitate human conversation convincingly. His wartime codebreaking and theoretical work influenced computer science. Identify him.", options:["John von Neumann", "Charles Babbage", "Alan Turing", "Claude Shannon"], answer:2, category:"Science & Tech"},
   {q:"A British engineer developed an early programmable electronic computer during the Second World War to help process encrypted messages. The machine used vacuum tubes. Identify the computer.", options:["Bombe", "ENIAC", "Z3", "Colossus"], answer:3, category:"Science & Tech"},
   {q:"A South Korean electronics company began as a trading business in 1938 and later expanded into electronics and semiconductors. Its name is often translated as “three stars.” Identify the company.", options:["Samsung", "LG", "Hyundai", "Daewoo"], answer:0, category:"Brands & Games"},
   {q:"A Japanese electronics business adopted its present name in 1958, choosing a word intended to be easy to pronounce internationally. It later became associated with consumer electronics and gaming. Identify the company.", options:["Panasonic", "Sony", "Sharp", "Toshiba"], answer:1, category:"Brands & Games"},
@@ -435,7 +435,7 @@ const QUESTIONS = [
   {q:"An Indian badminton player won an Olympic silver medal in 2016 and later became the first Indian woman to win two Olympic medals. Identify her.", options:["Saina Nehwal", "Mary Kom", "Sania Mirza", "P. V. Sindhu"], answer:3, category:"Sports"},
   {q:"A cricket format introduced in English domestic cricket in 2003 made matches shorter and more commercially accessible. Its first men’s World Cup took place in 2007 and helped inspire franchise leagues. Identify the format.", options:["Twenty20 (T20)", "One Day International (ODI)", "Test cricket", "The Hundred"], answer:0, category:"Sports"},
   {q:"A tennis tournament played on grass in southwest London is the oldest of the four Grand Slam events. Traditions include all-white clothing and strawberries with cream. Identify the tournament.", options:["US Open", "Wimbledon", "French Open", "Australian Open"], answer:1, category:"Sports"},
-  {q:"A cycling race runs over three weeks each summer, mainly across France and neighbouring countries. The overall leader wears a yellow jersey. Identify the race.", options:["Giro d’Italia", "Vuelta a España", "Tour de France", "Paris–Roubaix"], answer:2, category:"Sports"},
+  {q:"A cycling race first held in 1903 runs over three weeks each July, and its overall leader wears a yellow jersey. Identify the race.", options:["Giro d’Italia", "Vuelta a España", "Tour de France", "Paris–Roubaix"], answer:2, category:"Sports"},
   {q:"A South Indian lentil preparation balances sour, sweet and spicy flavours through ingredients such as tamarind or kokum and sometimes jaggery. A related dish often includes vegetables and is served with rice. Identify it.", options:["Avial", "Dal Makhani", "Khichdi", "Sambar"], answer:3, category:"Food"},
   {q:"A Japanese dish uses vinegared rice with seafood, vegetables or egg. Although raw fish is associated with some varieties, seasoned rice is the defining feature. Identify the food.", options:["Sushi", "Sashimi", "Ramen", "Tempura"], answer:0, category:"Food"},
   {q:"A Korean side dish commonly uses cabbage or radish, chilli, garlic and seasonings. Traditional fermentation helps preserve it and gives it a distinctive tangy flavour. Identify the dish.", options:["Bibimbap", "Kimchi", "Tteokbokki", "Bulgogi"], answer:1, category:"Food"},
@@ -445,25 +445,6 @@ const QUESTIONS = [
   {q:"A city in present-day Jordan is famous for monumental buildings carved into rose-coloured sandstone cliffs. It flourished as the capital of the Nabataean kingdom and controlled important trade routes. Identify it.", options:["Palmyra", "Petra", "Persepolis", "Jerash"], answer:1, category:"History & World"},
   {q:"An ancient Mesopotamian writing system used wedge-shaped marks pressed into clay tablets. Scribes recorded laws, trade, literature and astronomical observations using it. Identify the system.", options:["Hieroglyphics", "Linear B", "Cuneiform", "Brahmi script"], answer:2, category:"History & World"},
   {q:"A Babylonian king’s law code is famous for proportional retaliation, although its rules varied according to social status. A surviving monument depicts the king receiving authority from a deity. Identify the code.", options:["Code of Justinian", "Twelve Tables", "Code of Ur-Nammu", "Code of Hammurabi"], answer:3, category:"History & World"},
-  {q:"A physicist working in India investigated how light scatters when it passes through matter. The effect he discovered later became central to spectroscopy. Identify the scientist.", options:["C. V. Raman", "Satyendra Nath Bose", "Homi J. Bhabha", "Meghnad Saha"], answer:0, category:"Science & Tech"},
-  {q:"A physicist studying radiation from heated objects proposed that energy is exchanged in discrete packets, helping launch quantum theory. Identify him.", options:["Niels Bohr", "Max Planck", "Albert Einstein", "Erwin Schrödinger"], answer:1, category:"Science & Tech"},
-  {q:"After astronomers noticed irregularities in Uranus's orbit, mathematical predictions pointed to an unseen planet that was then observed. Identify the planet.", options:["Pluto", "Uranus", "Neptune", "Saturn"], answer:2, category:"Science & Tech"},
-  {q:"A pioneering researcher investigated radioactivity and became the first person to win Nobel Prizes in two different scientific fields. Identify her.", options:["Rosalind Franklin", "Dorothy Hodgkin", "Lise Meitner", "Marie Curie"], answer:3, category:"Science & Tech"},
-  {q:"A chemist organised the known elements into a periodic table and left gaps for substances that had not yet been discovered. Identify him.", options:["Dmitri Mendeleev", "J. J. Thomson", "Antoine Lavoisier", "John Dalton"], answer:0, category:"Science & Tech"},
-  {q:"Experiments involving the scattering of alpha particles led a physicist to propose that atoms contain a tiny, dense nucleus. Identify him.", options:["J. J. Thomson", "Ernest Rutherford", "James Chadwick", "Niels Bohr"], answer:1, category:"Science & Tech"},
-  {q:"A physicist proposed that electrons occupy specific allowed energy levels around an atomic nucleus, helping explain hydrogen's spectrum. Identify him.", options:["Max Planck", "Erwin Schrödinger", "Niels Bohr", "Werner Heisenberg"], answer:2, category:"Science & Tech"},
-  {q:"An Indian physicist developed a statistical treatment of particles that later became associated with particles called bosons. Identify him.", options:["C. V. Raman", "Homi J. Bhabha", "Jagadish Chandra Bose", "Satyendra Nath Bose"], answer:3, category:"Science & Tech"},
-  {q:"A naturalist developed a theory of evolution by natural selection after collecting observations during a long voyage aboard a survey ship. Identify him.", options:["Charles Darwin", "Alfred Russel Wallace", "Jean-Baptiste Lamarck", "Gregor Mendel"], answer:0, category:"Science & Tech"},
-  {q:"Using an improved telescope, an astronomer observed Jupiter's moons and the phases of Venus, supporting a Sun-centred model. Identify him.", options:["Tycho Brahe", "Galileo Galilei", "Johannes Kepler", "Nicolaus Copernicus"], answer:1, category:"Science & Tech"},
-  {q:"A physicist published influential work in 1905 on space, time and light and later won a Nobel Prize for explaining the photoelectric effect. Identify him.", options:["Enrico Fermi", "Max Planck", "Albert Einstein", "Niels Bohr"], answer:2, category:"Science & Tech"},
-  {q:"A British mathematician worked on wartime codebreaking and proposed a test involving a machine's ability to imitate human conversation. Identify him.", options:["John von Neumann", "Claude Shannon", "Charles Babbage", "Alan Turing"], answer:3, category:"Science & Tech"},
-  {q:"A nineteenth-century writer described a method for a proposed mechanical computing machine and considered how such machines might manipulate symbols. Identify her.", options:["Ada Lovelace", "Hedy Lamarr", "Katherine Johnson", "Grace Hopper"], answer:0, category:"Science & Tech"},
-  {q:"An Indian mathematician and astronomer argued that Earth rotates on its axis and produced influential work on arithmetic and astronomy. Identify him.", options:["Bhaskara II", "Aryabhata", "Varahamihira", "Brahmagupta"], answer:1, category:"India"},
-  {q:"A scholar associated with the Kerala school developed infinite series for trigonometric functions centuries before these methods became prominent in Europe. Identify him.", options:["Bhaskara I", "Nilakantha Somayaji", "Madhava of Sangamagrama", "Aryabhata"], answer:2, category:"India"},
-  {q:"A physicist helped establish India's nuclear research programme after independence, and a major Mumbai research centre later took his name. Identify him.", options:["Vikram Sarabhai", "A. P. J. Abdul Kalam", "Meghnad Saha", "Homi J. Bhabha"], answer:3, category:"India"},
-  {q:"An agricultural scientist helped spread high-yielding crop varieties and modern farming practices during India's Green Revolution. Identify him.", options:["M. S. Swaminathan", "Norman Borlaug", "Verghese Kurien", "B. P. Pal"], answer:0, category:"India"},
-  {q:"An ancient Greek physician is traditionally associated with a famous medical oath and is often called a foundational figure in Western medicine. Identify him.", options:["Herophilus", "Hippocrates", "Aristotle", "Galen"], answer:1, category:"Science & Tech"},
-  {q:"A naturalist developed a system that gives each species a two-part Latinised name, shaping modern biological naming. Identify him.", options:["Louis Pasteur", "Charles Darwin", "Carl Linnaeus", "Gregor Mendel"], answer:2, category:"Science & Tech"},
   {q:"A French scientist developed methods that reduced harmful microbes in beverages and helped establish germ theory. Identify him.", options:["Alexander Fleming", "Robert Koch", "Joseph Lister", "Louis Pasteur"], answer:3, category:"Science & Tech"},
   {q:"A Scottish bacteriologist noticed that a mould inhibited bacterial growth, leading to the discovery of penicillin. Identify him.", options:["Alexander Fleming", "Edward Jenner", "Louis Pasteur", "Robert Koch"], answer:0, category:"Science & Tech"},
   {q:"Experiments with pea plants led a monk to formulate foundational principles of heredity. Identify him.", options:["Charles Darwin", "Gregor Mendel", "Thomas Hunt Morgan", "Hugo de Vries"], answer:1, category:"Science & Tech"},
@@ -475,22 +456,6 @@ const QUESTIONS = [
   {q:"An Indian physicist helped establish the country's space programme and championed the use of satellites for development. Identify him.", options:["Satish Dhawan", "A. P. J. Abdul Kalam", "Homi J. Bhabha", "Vikram Sarabhai"], answer:3, category:"India"},
   {q:"An aerospace scientist who contributed to India's missile and space programmes later became the country's president. Identify him.", options:["A. P. J. Abdul Kalam", "Vikram Sarabhai", "C. V. Raman", "Homi J. Bhabha"], answer:0, category:"India"},
   {q:"An X-ray diffraction image produced by a chemist was crucial to understanding DNA's structure. Identify her.", options:["Marie Curie", "Rosalind Franklin", "Dorothy Hodgkin", "Barbara McClintock"], answer:1, category:"Science & Tech"},
-  {q:"A Mauryan emperor's inscriptions describe remorse after a devastating campaign and promote moral conduct and welfare. Identify the ruler.", options:["Chandragupta Maurya", "Bindusara", "Ashoka", "Kanishka"], answer:2, category:"India"},
-  {q:"A reformer from Bengal campaigned against sati and founded an organisation promoting monotheism that influenced later social reform. Identify him.", options:["Swami Vivekananda", "Debendranath Tagore", "Ishwar Chandra Vidyasagar", "Raja Ram Mohan Roy"], answer:3, category:"India"},
-  {q:"An Indian nationalist later sought international support against British rule and became closely associated with the Indian National Army. Identify him.", options:["Subhas Chandra Bose", "Bal Gangadhar Tilak", "Jawaharlal Nehru", "Bhagat Singh"], answer:0, category:"India"},
-  {q:"A poet and political activist became the first Indian woman to preside over the Indian National Congress and was known by an honorific linked to song. Identify her.", options:["Kamaladevi Chattopadhyay", "Sarojini Naidu", "Vijaya Lakshmi Pandit", "Annie Besant"], answer:1, category:"India"},
-  {q:"A nineteenth-century social reformer opposed caste discrimination and, with his wife Savitribai, helped establish schools for girls. Identify him.", options:["Gopal Hari Deshmukh", "Periyar E. V. Ramasamy", "Jyotirao Phule", "B. R. Ambedkar"], answer:2, category:"India"},
-  {q:"A Chola ruler expanded maritime influence into Southeast Asia and launched naval expeditions against the Srivijaya network. Identify him.", options:["Kulottunga I", "Rajaraja Chola I", "Karikala Chola", "Rajendra Chola I"], answer:3, category:"India"},
-  {q:"An anti-apartheid leader spent 27 years in prison before becoming South Africa's first Black president in a fully representative democratic election. Identify him.", options:["Nelson Mandela", "F. W. de Klerk", "Desmond Tutu", "Steve Biko"], answer:0, category:"History & World"},
-  {q:"A US civil-rights leader promoted non-violent protest and delivered a famous 1963 speech in Washington. Identify him.", options:["Malcolm X", "Martin Luther King Jr.", "Rosa Parks", "Thurgood Marshall"], answer:1, category:"History & World"},
-  {q:"A military leader rose during the French Revolution, became emperor in 1804 and introduced a legal code influential abroad. Identify him.", options:["Louis XIV", "Charles de Gaulle", "Napoleon Bonaparte", "Julius Caesar"], answer:2, category:"History & World"},
-  {q:"A 1919 settlement imposed conditions on Germany after the First World War and established the League of Nations framework. Identify the treaty.", options:["Treaty of Tordesillas", "Treaty of Utrecht", "Treaty of Paris", "Treaty of Versailles"], answer:3, category:"History & World"},
-  {q:"An explorer sailing west from Europe reached Caribbean islands in 1492 while seeking a route to Asia. Identify him.", options:["Christopher Columbus", "Vasco da Gama", "Amerigo Vespucci", "Ferdinand Magellan"], answer:0, category:"History & World"},
-  {q:"An expedition led by a Portuguese navigator became the first to complete a circumnavigation of Earth, although its leader died before the voyage ended. Identify him.", options:["Christopher Columbus", "Ferdinand Magellan", "James Cook", "Vasco da Gama"], answer:1, category:"History & World"},
-  {q:"A city in present-day Jordan is famous for monumental structures carved into rose-coloured sandstone and once flourished as a Nabataean trade centre. Identify it.", options:["Jerash", "Palmyra", "Petra", "Persepolis"], answer:2, category:"History & World"},
-  {q:"An ancient network of trade routes connected East Asia with Central Asia, the Middle East and Europe, spreading goods, beliefs and technologies. Identify it.", options:["Royal Road", "Amber Road", "Spice Route", "Silk Road"], answer:3, category:"History & World"},
-  {q:"Scribes in ancient Mesopotamia pressed wedge-shaped marks into clay tablets to record trade, laws and literature. Identify the writing system.", options:["Cuneiform", "Hieroglyphics", "Linear B", "Brahmi"], answer:0, category:"History & World"},
-  {q:"A Babylonian law collection is associated with proportional retaliation and survives on a monument depicting a king receiving authority from a deity. Identify it.", options:["Twelve Tables", "Code of Hammurabi", "Edicts of Ashoka", "Justinian Code"], answer:1, category:"History & World"},
   {q:"An international organisation created after the First World War aimed to prevent future conflicts but lacked the means to stop several acts of aggression. Identify it.", options:["NATO", "United Nations", "League of Nations", "European Union"], answer:2, category:"History & World"},
   {q:"In 1930, Mahatma Gandhi led a march to the coast to protest a colonial tax on a common household necessity. Identify the event.", options:["Khilafat Movement", "Champaran Satyagraha", "Quit India Movement", "Dandi March"], answer:3, category:"India"},
   {q:"A 1757 battle in Bengal helped the British East India Company expand its political power in India. Identify the battle.", options:["Battle of Plassey", "Battle of Talikota", "Third Battle of Panipat", "Battle of Buxar"], answer:0, category:"India"},
@@ -498,16 +463,13 @@ const QUESTIONS = [
   {q:"A nineteenth-century Japanese political transformation restored imperial rule and accelerated industrial and military modernisation. Identify it.", options:["Tokugawa Shogunate", "Taika Reform", "Meiji Restoration", "Chinese Revolution"], answer:2, category:"History & World"},
   {q:"A barrier erected in 1961 divided a German city and became a symbol of Cold War division before it opened in 1989. Identify it.", options:["Great Wall of China", "Iron Curtain", "Hadrian's Wall", "Berlin Wall"], answer:3, category:"History & World"},
   {q:"Beginning in 1789, a political upheaval challenged monarchy and privilege and popularised ideals of liberty, equality and fraternity. Identify it.", options:["French Revolution", "July Revolution", "Glorious Revolution", "Russian Revolution"], answer:0, category:"History & World"},
-  {q:"An ancient South Asian civilisation built planned cities such as Harappa and Mohenjo-daro, with drainage systems and undeciphered script. Identify it.", options:["Gupta Empire", "Harappan civilisation", "Vedic civilisation", "Mauryan Empire"], answer:1, category:"India"},
-  {q:"An ancient learning centre in Bihar attracted students from across Asia and taught subjects including logic, medicine and Buddhist philosophy. Identify it.", options:["Takshashila", "Valabhi", "Nalanda", "Vikramashila"], answer:2, category:"India"},
-  {q:"A thirteenth-century temple in Odisha was designed as a monumental stone chariot dedicated to a solar deity. Identify it.", options:["Jagannath Temple", "Meenakshi Temple", "Brihadeeswarar Temple", "Konark Sun Temple"], answer:3, category:"India"},
+  {q:"An ancient South Asian civilisation built grid-planned brick cities with covered drains, standardised weights and a great public bath, and used a script still undeciphered. Identify it.", options:["Gupta Empire", "Harappan civilisation", "Vedic civilisation", "Mauryan Empire"], answer:1, category:"India"},
   {q:"Ruins along the Tungabhadra preserve temples, royal buildings and water systems from the capital of the Vijayanagara Empire. Identify the site.", options:["Hampi", "Badami", "Warangal", "Madurai"], answer:0, category:"India"},
   {q:"A Buddhist monument in Madhya Pradesh is famous for its hemispherical dome and carved gateways associated with the Mauryan and later periods. Identify it.", options:["Dhamek Stupa", "Sanchi Stupa", "Amaravati Stupa", "Kesariya Stupa"], answer:1, category:"India"},
   {q:"A soaring minaret in Delhi was begun under the Delhi Sultanate and is part of a UNESCO World Heritage complex. Identify it.", options:["Vijay Stambha", "Charminar", "Qutb Minar", "Alai Darwaza"], answer:2, category:"India"},
   {q:"A Mughal emperor commissioned a white-marble mausoleum in Agra in memory of his wife. Identify the monument.", options:["Humayun's Tomb", "Bibi Ka Maqbara", "Safdarjung's Tomb", "Taj Mahal"], answer:3, category:"India"},
   {q:"In 1919, troops fired on a gathering in Amritsar, intensifying opposition to British colonial rule. Identify the event.", options:["Jallianwala Bagh massacre", "Meerut Conspiracy Case", "Chauri Chaura incident", "Kakori train action"], answer:0, category:"India"},
   {q:"The Indian National Congress launched a mass campaign in August 1942 demanding an end to British rule. Identify the movement.", options:["Civil Disobedience Movement", "Quit India Movement", "Swadeshi Movement", "Non-Cooperation Movement"], answer:1, category:"India"},
-  {q:"A continent contains many climatic zones and the world's largest hot desert, the Sahara. Identify it.", options:["Australia", "Asia", "Africa", "South America"], answer:2, category:"Geography"},
   {q:"The world's largest hot desert stretches across much of North Africa. Identify it.", options:["Atacama", "Kalahari", "Gobi", "Sahara"], answer:3, category:"Geography"},
   {q:"A major South American river carries an enormous volume of water to the Atlantic and flows through the world's largest tropical rainforest region. Identify it.", options:["Amazon River", "Orinoco", "Paraná", "Nile"], answer:0, category:"Geography"},
   {q:"The highest mountain above sea level lies in the Himalayas on the border between Nepal and China. Identify it.", options:["K2", "Mount Everest", "Lhotse", "Kangchenjunga"], answer:1, category:"Geography"},
@@ -527,48 +489,13 @@ const QUESTIONS = [
   {q:"Brazil inaugurated a planned inland capital in 1960 to encourage development away from its Atlantic coast. Identify it.", options:["Salvador", "Rio de Janeiro", "São Paulo", "Brasília"], answer:3, category:"Geography"},
   {q:"A major river flowing north through northeastern Africa empties into the Mediterranean Sea. Identify it.", options:["Nile", "Congo", "Zambezi", "Niger"], answer:0, category:"Geography"},
   {q:"A salt lake bordering Jordan and Israel/Palestine lies far below sea level and is famous for its high salinity. Identify it.", options:["Great Salt Lake", "Dead Sea", "Aral Sea", "Lake Assal"], answer:1, category:"Geography"},
-  {q:"A Dutch post-Impressionist painted a swirling night sky with bright stars while staying in southern France. Identify the painting.", options:["Café Terrace at Night", "The Scream", "The Starry Night", "Wheatfield with Crows"], answer:2, category:"Arts & Literature"},
-  {q:"A Prague-born German-language writer portrayed people trapped in strange, impersonal systems; his surname became an adjective for bureaucratic absurdity. Identify him.", options:["Rainer Maria Rilke", "Hermann Hesse", "Thomas Mann", "Franz Kafka"], answer:3, category:"Arts & Literature"},
-  {q:"A novella opens with a travelling salesman waking to find that he has transformed into a monstrous insect-like creature. Identify the work.", options:["The Metamorphosis", "The Stranger", "The Trial", "The Plague"], answer:0, category:"Arts & Literature"},
-  {q:"A classical Sanskrit poet and dramatist wrote a celebrated play about a king and Shakuntala. Identify him.", options:["Bhavabhuti", "Kalidasa", "Banabhatta", "Bhasa"], answer:1, category:"Arts & Literature"},
-  {q:"A South Asian poet won the Nobel Prize in Literature in 1913 and wrote the collection Gitanjali. Identify him.", options:["Kazi Nazrul Islam", "Bankim Chandra Chattopadhyay", "Rabindranath Tagore", "Sarojini Naidu"], answer:2, category:"Arts & Literature"},
-  {q:"An English playwright wrote tragedies involving a Danish prince, a jealous general and a Scottish thane whose ambition leads to ruin. Identify him.", options:["Ben Jonson", "John Milton", "Christopher Marlowe", "William Shakespeare"], answer:3, category:"Arts & Literature"},
-  {q:"A 1925 novel follows a wealthy host whose lavish parties conceal a longing to reunite with a woman from his past. Identify the novel.", options:["The Great Gatsby", "A Farewell to Arms", "Of Mice and Men", "The Sun Also Rises"], answer:0, category:"Arts & Literature"},
-  {q:"A Russian novel follows a former student who commits murder and wrestles with guilt, poverty and moral reasoning. Identify the work.", options:["The Idiot", "Crime and Punishment", "Fathers and Sons", "The Brothers Karamazov"], answer:1, category:"Arts & Literature"},
-  {q:"A fantasy author created Middle-earth, where a hobbit and a fellowship try to destroy a powerful ring. Identify the author.", options:["C. S. Lewis", "George R. R. Martin", "J. R. R. Tolkien", "Terry Pratchett"], answer:2, category:"Arts & Literature"},
-  {q:"A fictional detective created by Arthur Conan Doyle relies on deduction and forensic observation, with Dr Watson narrating many cases. Identify the detective.", options:["Hercule Poirot", "Auguste Dupin", "Philip Marlowe", "Sherlock Holmes"], answer:3, category:"Arts & Literature"},
-  {q:"A Spanish artist helped develop Cubism and painted Guernica in response to the bombing of a Basque town. Identify him.", options:["Pablo Picasso", "Salvador Dalí", "Joan Miró", "Diego Velázquez"], answer:0, category:"Arts & Literature"},
-  {q:"A Mexican painter is known for symbolic self-portraits shaped by folk art, identity and experiences of physical pain. Identify her.", options:["Remedios Varo", "Frida Kahlo", "Georgia O'Keeffe", "Leonora Carrington"], answer:1, category:"Arts & Literature"},
-  {q:"A composer born in Bonn continued writing music as his hearing deteriorated; his Ninth Symphony includes “Ode to Joy.” Identify him.", options:["Franz Schubert", "Joseph Haydn", "Ludwig van Beethoven", "Wolfgang Amadeus Mozart"], answer:2, category:"Arts & Literature"},
-  {q:"A Liverpool band featuring John Lennon and Paul McCartney transformed popular music through songwriting and studio experimentation. Identify the band.", options:["The Kinks", "The Who", "The Rolling Stones", "The Beatles"], answer:3, category:"Film & Music"},
-  {q:"A Jamaican musician helped popularise reggae internationally and became associated with Rastafari culture and songs about social justice. Identify him.", options:["Bob Marley", "Burning Spear", "Jimmy Cliff", "Peter Tosh"], answer:0, category:"Film & Music"},
-  {q:"A Japanese director made a 1950 film whose conflicting accounts of a crime inspired a term for contradictory narratives. Identify him.", options:["Yasujirō Ozu", "Akira Kurosawa", "Kenji Mizoguchi", "Hayao Miyazaki"], answer:1, category:"Film & Music"},
-  {q:"A Bengali filmmaker created the Apu Trilogy, following a boy through childhood, youth and adulthood. Identify him.", options:["Mrinal Sen", "Ritwik Ghatak", "Satyajit Ray", "Bimal Roy"], answer:2, category:"Film & Music"},
-  {q:"A South Korean film about a poor family becoming entangled with a wealthy household won the Academy Award for Best Picture. Identify it.", options:["Oldboy", "Burning", "The Handmaiden", "Parasite"], answer:3, category:"Film & Music"},
-  {q:"A 2010 Christopher Nolan film follows a team that attempts to plant an idea inside a target's mind through layered dreams. Identify it.", options:["Inception", "Memento", "Tenet", "Shutter Island"], answer:0, category:"Film & Music"},
-  {q:"A science-fiction film follows astronauts through a wormhole as Earth faces environmental crisis and explores time dilation. Identify the film.", options:["Gravity", "Interstellar", "The Martian", "Arrival"], answer:1, category:"Film & Music"},
-  {q:"A 1972 film follows a crime family's youngest son as he gradually takes power; it was directed by Francis Ford Coppola. Identify it.", options:["Goodfellas", "Once Upon a Time in America", "The Godfather", "Scarface"], answer:2, category:"Film & Music"},
-  {q:"An Indian film follows villagers who challenge British colonial authorities to a cricket match to avoid a punitive tax. Identify it.", options:["Swades", "Mangal Pandey", "Rang De Basanti", "Lagaan"], answer:3, category:"Film & Music"},
-  {q:"A Kannada film draws on coastal Karnataka folklore, ritual performance and land conflicts, with a climax involving Bhoota Kola. Identify it.", options:["Kantara", "Ugramm", "Garuda Gamana Vrishabha Vahana", "777 Charlie"], answer:0, category:"Film & Music"},
   {q:"A Norwegian artist painted a figure with an agonised expression against a turbulent sky in a work often associated with modern anxiety. Identify the painting.", options:["The Kiss", "The Scream", "Nighthawks", "American Gothic"], answer:1, category:"Arts & Literature"},
   {q:"Leonardo da Vinci painted a portrait famous for its enigmatic smile and display at the Louvre. Identify the painting.", options:["The Last Supper", "Lady with an Ermine", "Mona Lisa", "Girl with a Pearl Earring"], answer:2, category:"Arts & Literature"},
   {q:"An ancient Greek epic follows a hero's long journey home after the Trojan War. Identify the poem.", options:["Argonautica", "The Iliad", "Aeneid", "The Odyssey"], answer:3, category:"Arts & Literature"},
   {q:"An ancient Greek epic focuses on events during the Trojan War, especially the anger of Achilles. Identify the poem.", options:["The Iliad", "Aeneid", "Metamorphoses", "The Odyssey"], answer:0, category:"Arts & Literature"},
   {q:"Jane Austen's novel follows Elizabeth Bennet and Mr Darcy as they confront first impressions, social expectations and marriage. Identify it.", options:["Sense and Sensibility", "Pride and Prejudice", "Jane Eyre", "Emma"], answer:1, category:"Arts & Literature"},
   {q:"Gabriel García Márquez's novel chronicles generations of the Buendía family in the fictional town of Macondo. Identify it.", options:["Love in the Time of Cholera", "The House of the Spirits", "One Hundred Years of Solitude", "Pedro Páramo"], answer:2, category:"Arts & Literature"},
-  {q:"A programming language named after a British comedy series became known for readable syntax and broad use in data science and AI. Identify it.", options:["Java", "Perl", "Ruby", "Python"], answer:3, category:"Science & Tech"},
-  {q:"A South Korean company began as a trading business in 1938; its name is often translated as “three stars.” Identify it.", options:["Samsung", "Panasonic", "LG", "Hyundai"], answer:0, category:"Brands & Games"},
-  {q:"A Japanese electronics company adopted its current name in 1958 and became associated with consumer electronics, music and gaming. Identify it.", options:["Toshiba", "Sony", "Sharp", "Canon"], answer:1, category:"Brands & Games"},
-  {q:"A sportswear company's name comes from the Greek goddess of victory, and its curved logo is known as the Swoosh. Identify it.", options:["Puma", "Reebok", "Nike", "Adidas"], answer:2, category:"Brands & Games"},
-  {q:"A Swedish retailer founded by a teenager became known for flat-pack furniture; its name combines initials and place references. Identify it.", options:["Muji", "JYSK", "H&M", "IKEA"], answer:3, category:"Brands & Games"},
-  {q:"A luxury automaker began in Bavaria in 1916 as an aircraft-engine business. Identify the company.", options:["BMW", "Audi", "Porsche", "Mercedes-Benz"], answer:0, category:"Brands & Games"},
-  {q:"A Japanese automaker's name derives from its founder's surname, and the company became associated with lean manufacturing. Identify it.", options:["Honda", "Toyota", "Mazda", "Nissan"], answer:1, category:"Brands & Games"},
-  {q:"A Kyoto company founded in 1889 first made playing cards before becoming a major video-game business. Identify it.", options:["Bandai Namco", "Sony", "Nintendo", "Sega"], answer:2, category:"Brands & Games"},
-  {q:"A beverage created by an Atlanta pharmacist in the nineteenth century became globally famous, and its modern formula remains a trade secret. Identify it.", options:["Pepsi", "Fanta", "Dr Pepper", "Coca-Cola"], answer:3, category:"Brands & Games"},
-  {q:"A property board game has players buy sites, collect rent and try to avoid bankruptcy; its history connects to an earlier anti-monopoly game. Identify it.", options:["Monopoly", "Cluedo", "Risk", "The Game of Life"], answer:0, category:"Brands & Games"},
   {q:"A Hungarian inventor created a rotating three-dimensional puzzle in the 1970s, challenging players to make each face a single colour. Identify it.", options:["Jigsaw puzzle", "Rubik's Cube", "Tetris", "Tangram"], answer:1, category:"Brands & Games"},
-  {q:"A British wartime electronic computer using vacuum tubes helped process encrypted messages at Bletchley Park. Identify it.", options:["ENIAC", "UNIVAC I", "Colossus", "Z3"], answer:2, category:"Science & Tech"},
-  {q:"An inventor and industrialist made a fortune through explosives and left a will establishing internationally renowned prizes. Identify him.", options:["Andrew Carnegie", "Louis Pasteur", "Alexander Graham Bell", "Alfred Nobel"], answer:3, category:"Science & Tech"},
   {q:"A British computer scientist invented the World Wide Web while working at CERN. Identify him.", options:["Tim Berners-Lee", "Steve Wozniak", "Bill Gates", "Vint Cerf"], answer:0, category:"Science & Tech"},
   {q:"A computer scientist and US Navy officer helped develop early compilers and popularised the term “debugging” in computing lore. Identify her.", options:["Radia Perlman", "Grace Hopper", "Ada Lovelace", "Margaret Hamilton"], answer:1, category:"Science & Tech"},
   {q:"A co-founder of Apple helped popularise the Macintosh, iPod and iPhone through product-focused design and marketing. Identify him.", options:["Steve Wozniak", "Bill Gates", "Steve Jobs", "Michael Dell"], answer:2, category:"Science & Tech"},
@@ -577,14 +504,7 @@ const QUESTIONS = [
   {q:"A short-range wireless technology takes its name from a tenth-century Scandinavian king. Identify it.", options:["Zigbee", "Bluetooth", "NFC", "Wi-Fi"], answer:1, category:"Science & Tech"},
   {q:"A two-dimensional barcode originally developed for tracking automotive parts can be scanned to access encoded information. Identify it.", options:["Magnetic stripe", "UPC barcode", "QR code", "RFID tag"], answer:2, category:"Science & Tech"},
   {q:"A satellite-based navigation system provides positioning and timing information to receivers around Earth. Identify it.", options:["GLONASS", "AIS", "Galileo", "GPS"], answer:3, category:"Science & Tech"},
-  {q:"An Argentine footballer captained his country to the 2022 World Cup title after losing earlier finals and spent much of his club career at Barcelona. Identify him.", options:["Lionel Messi", "Luis Suárez", "Ángel Di María", "Neymar"], answer:0, category:"Sports"},
-  {q:"A Portuguese footballer known for goal scoring and an athletic jump-and-turn celebration played for Manchester United, Real Madrid and Juventus. Identify him.", options:["Luis Figo", "Cristiano Ronaldo", "Zlatan Ibrahimović", "Kylian Mbappé"], answer:1, category:"Sports"},
-  {q:"A Brazilian footballer nicknamed “the wizard” was celebrated for dribbling and creativity and won the 2002 World Cup. Identify him.", options:["Romário", "Kaká", "Ronaldinho", "Rivaldo"], answer:2, category:"Sports"},
-  {q:"A Jamaican sprinter set world records in the 100 and 200 metres in 2009 and dominated three consecutive Olympic Games. Identify him.", options:["Yohan Blake", "Asafa Powell", "Justin Gatlin", "Usain Bolt"], answer:3, category:"Sports"},
-  {q:"A Swiss tennis player won 20 Grand Slam singles titles and was admired for elegant technique and longevity. Identify him.", options:["Roger Federer", "Rafael Nadal", "Andy Murray", "Novak Djokovic"], answer:0, category:"Sports"},
-  {q:"A cricket format with 20 overs per side made matches shorter and commercially accessible; its first men's World Cup took place in 2007. Identify the format.", options:["Test cricket", "One Day International", "Twenty20 cricket", "The Hundred"], answer:2, category:"Sports"},
-  {q:"A grass-court tennis tournament in southwest London is the oldest of the four Grand Slam events and traditionally requires all-white clothing. Identify it.", options:["US Open", "Australian Open", "French Open", "Wimbledon"], answer:3, category:"Sports"},
-  {q:"A three-week cycling race held mainly in France features a yellow jersey for the overall leader. Identify the race.", options:["Tour de France", "Giro d'Italia", "Paris–Roubaix", "Vuelta a España"], answer:0, category:"Sports"},
+  {q:"A short cricket format first played professionally in England in 2003 made matches shorter and commercially accessible; its first men's World Cup took place in 2007. Identify the format.", options:["Test cricket", "One Day International", "Twenty20 cricket", "The Hundred"], answer:2, category:"Sports"},
   {q:"A basketball star led the Chicago Bulls to six NBA championships in the 1990s and became a global sports icon. Identify him.", options:["Kobe Bryant", "Michael Jordan", "LeBron James", "Magic Johnson"], answer:1, category:"Sports"},
   {q:"An American tennis player won 23 Grand Slam singles titles in the Open Era and dominated women's tennis for decades. Identify her.", options:["Venus Williams", "Steffi Graf", "Serena Williams", "Martina Navratilova"], answer:2, category:"Sports"},
   {q:"An Indian cricketer known as the “Little Master” scored 100 international centuries and was part of the 2011 World Cup-winning team. Identify him.", options:["Sunil Gavaskar", "Virat Kohli", "Rahul Dravid", "Sachin Tendulkar"], answer:3, category:"Sports"},
@@ -593,13 +513,7 @@ const QUESTIONS = [
   {q:"A historic Test cricket series between England and Australia takes its name from a satirical obituary about English cricket. Identify the series.", options:["Calcutta Cup", "Border-Gavaskar Trophy", "The Ashes", "Rugby Championship"], answer:2, category:"Sports"},
   {q:"The international men's football tournament is held every four years and brings together national teams from around the world. Identify the tournament.", options:["Copa América", "UEFA Champions League", "AFC Asian Cup", "FIFA World Cup"], answer:3, category:"Sports"},
   {q:"An international multi-sport event traces its name to an ancient Greek festival site and is held in summer and winter editions. Identify it.", options:["Olympic Games", "Asian Games", "Pan American Games", "Commonwealth Games"], answer:0, category:"Sports"},
-  {q:"The leader of the overall classification in this famous cycling race traditionally wears a yellow jersey. Identify the event.", options:["Vuelta a España", "Tour de France", "Giro d'Italia", "Paris–Nice"], answer:1, category:"Sports"},
   {q:"A team sport associated with a ball carried and passed by hand originated in English school traditions and has union and league codes. Identify the sport.", options:["Field hockey", "American football", "Rugby", "Lacrosse"], answer:2, category:"Sports"},
-  {q:"A South Indian lentil preparation combines vegetables and a souring agent such as tamarind, often served with rice or idli. Identify the dish.", options:["Kadhi", "Rasam", "Dal makhani", "Sambar"], answer:3, category:"Food"},
-  {q:"A Japanese dish is defined by vinegared rice paired with seafood, vegetables or egg; raw fish is used in some but not all varieties. Identify it.", options:["Sushi", "Sashimi", "Onigiri", "Tempura"], answer:0, category:"Food"},
-  {q:"A Korean side dish commonly ferments cabbage or radish with chilli, garlic and seasonings. Identify it.", options:["Sauerkraut", "Kimchi", "Gochujang", "Miso"], answer:1, category:"Food"},
-  {q:"An Italian dessert layers coffee-soaked biscuits with mascarpone and cocoa; its name is often translated as “pick me up.” Identify it.", options:["Panna cotta", "Cannoli", "Tiramisu", "Gelato"], answer:2, category:"Food"},
-  {q:"A costly spice consists of the dried stigmas of a flower and adds colour and aroma to biryani and risotto. Identify it.", options:["Sumac", "Turmeric", "Cardamom", "Saffron"], answer:3, category:"Food"},
   {q:"A South Indian crepe is made from a fermented batter of rice and lentils and is often served with chutney and sambar. Identify it.", options:["Dosa", "Uttapam", "Pesarattu", "Appam"], answer:0, category:"Food"},
   {q:"A Mumbai street food combines mashed spiced vegetables with buttered bread rolls and became associated with workers' meal breaks. Identify it.", options:["Vada pav", "Pav bhaji", "Poha", "Misal pav"], answer:1, category:"Food"},
   {q:"A rice dish layers or cooks fragrant rice with spices and ingredients such as vegetables, meat or eggs, with many regional versions. Identify it.", options:["Pulao", "Khichdi", "Biryani", "Tehri"], answer:2, category:"Food"},
@@ -612,10 +526,8 @@ const QUESTIONS = [
   {q:"A South Asian tea preparation combines brewed tea with milk and spices such as cardamom, ginger or cinnamon. Identify it.", options:["Butter tea", "Masala chai", "Matcha", "Karak coffee"], answer:1, category:"Food"},
   {q:"A festival widely known as the festival of lights is celebrated by several Indian religious communities and often includes lamps and fireworks. Identify it.", options:["Onam", "Holi", "Diwali", "Baisakhi"], answer:2, category:"India"},
   {q:"A spring festival in South Asia is associated with coloured powders, bonfires and celebrations of renewal. Identify it.", options:["Pongal", "Navratri", "Diwali", "Holi"], answer:3, category:"India"},
-  {q:"A classical Indian dance tradition associated with Tamil Nadu combines rhythmic footwork, codified gestures and expressive storytelling. Identify it.", options:["Bharatanatyam", "Kathak", "Odissi", "Kuchipudi"], answer:0, category:"India"},
   {q:"A classical dance-drama from Kerala is known for elaborate makeup, costumes and expressive storytelling based on epics. Identify it.", options:["Bharatanatyam", "Kathakali", "Mohiniyattam", "Yakshagana"], answer:1, category:"India"},
   {q:"A set of physical, mental and contemplative practices with roots in South Asian traditions is now practised worldwide. Identify it.", options:["Tai chi", "Pilates", "Yoga", "Qigong"], answer:2, category:"India"},
-  {q:"An element with atomic number four takes its name from a mineral historically associated with a Karnataka town's older name. Identify the element.", options:["Lithium", "Magnesium", "Boron", "Beryllium"], answer:3, category:"Science & Tech"},
   {q:"A nearly electrically neutral subatomic particle interacts only weakly with matter and is produced in nuclear reactions and stellar processes. Identify it.", options:["Neutrino", "Electron", "Proton", "Muon"], answer:0, category:"Science & Tech"},
   {q:"A process moves solvent through a selectively permeable membrane from a region of lower solute concentration toward higher solute concentration. Identify it.", options:["Diffusion", "Osmosis", "Condensation", "Sublimation"], answer:1, category:"Science & Tech"},
   {q:"Plants, algae and some bacteria use light energy to convert carbon dioxide and water into energy-rich compounds. Identify the process.", options:["Transpiration", "Fermentation", "Photosynthesis", "Respiration"], answer:2, category:"Science & Tech"},
@@ -626,15 +538,15 @@ const QUESTIONS = [
   {q:"A space observatory launched in 1990 has produced iconic images and observations of distant galaxies. Identify it.", options:["Kepler telescope", "Chandra Observatory", "James Webb Space Telescope", "Hubble Space Telescope"], answer:3, category:"Science & Tech"},
   {q:"A gene-editing approach adapted from a bacterial defence system allows targeted changes to DNA. Identify the technology.", options:["CRISPR", "ELISA", "PCR", "Gel electrophoresis"], answer:0, category:"Science & Tech"},
   {q:"A jurist and social reformer chaired the Constitution's Drafting Committee and campaigned against caste discrimination. Identify him.", options:["Sardar Patel", "B. R. Ambedkar", "Rajendra Prasad", "C. Rajagopalachari"], answer:1, category:"India"},
-  {q:"A pioneering educator worked with Jyotirao Phule to open schools for girls in nineteenth-century Maharashtra. Identify her.", options:["Pandita Ramabai", "Tarabai Shinde", "Savitribai Phule", "Ramabai Ranade"], answer:2, category:"India"},
+  {q:"A pioneering educator opened one of the first schools for girls in Pune in 1848 with her husband, and is often called India’s first woman teacher. Identify her.", options:["Pandita Ramabai", "Tarabai Shinde", "Savitribai Phule", "Ramabai Ranade"], answer:2, category:"India"},
   {q:"A Portuguese navigator reached India by sea in 1498, arriving at Calicut. Identify him.", options:["Ferdinand Magellan", "Pedro Álvares Cabral", "Bartolomeu Dias", "Vasco da Gama"], answer:3, category:"India"},
-  {q:"The founder of the Mauryan Empire established a large state in ancient India with advice traditionally associated with Chanakya. Identify him.", options:["Chandragupta Maurya", "Kanishka", "Harsha", "Ashoka"], answer:0, category:"India"},
+  {q:"An ancient Indian ruler overthrew the Nanda dynasty with advice traditionally associated with Chanakya and later, by tradition, became a Jain monk. Identify him.", options:["Chandragupta Maurya", "Kanishka", "Harsha", "Ashoka"], answer:0, category:"India"},
   {q:"A Mughal emperor expanded his empire and pursued policies of administration and religious debate, including the court culture of Fatehpur Sikri. Identify him.", options:["Babur", "Akbar", "Humayun", "Aurangzeb"], answer:1, category:"India"},
   {q:"The queen of Jhansi became a prominent leader in the Indian Rebellion of 1857. Identify her.", options:["Ahilyabai Holkar", "Begum Hazrat Mahal", "Rani Lakshmibai", "Sarojini Naidu"], answer:2, category:"India"},
   {q:"The ruler of Mysore fought the British East India Company and became associated with the use of iron-cased rockets. Identify him.", options:["Hyder Ali", "Pazhassi Raja", "Maratha Shivaji", "Tipu Sultan"], answer:3, category:"India"},
   {q:"A powerful South Indian state flourished around a capital whose ruins are now found at Hampi. Identify the empire.", options:["Vijayanagara Empire", "Pallava Empire", "Chola Empire", "Satavahana Empire"], answer:0, category:"India"},
   {q:"A classical Indian dynasty is often associated with major developments in Sanskrit literature, mathematics and art. Identify it.", options:["Mauryan Empire", "Gupta Empire", "Kushan Empire", "Delhi Sultanate"], answer:1, category:"India"},
-  {q:"Symbols found on seals and objects from Harappan sites remain undeciphered despite extensive study. Identify the script.", options:["Brahmi", "Grantha", "Indus script", "Kharosthi"], answer:2, category:"India"},
+  {q:"Short sequences of symbols carved on seals from Bronze Age sites in the north-west of the subcontinent remain undeciphered despite extensive study. Identify the script.", options:["Brahmi", "Grantha", "Indus script", "Kharosthi"], answer:2, category:"India"},
   {q:"Japan's capital is one of the world's largest metropolitan areas and hosted the Summer Olympics in 1964 and 2021. Identify the city.", options:["Kyoto", "Osaka", "Sapporo", "Tokyo"], answer:3, category:"Geography"},
   {q:"The capital of Iceland lies near the Arctic Circle and is known for geothermal heating and nearby volcanic landscapes. Identify it.", options:["Reykjavík", "Oslo", "Helsinki", "Nuuk"], answer:0, category:"Geography"},
   {q:"A major Southeast Asian river flows through or borders China, Myanmar, Laos, Thailand, Cambodia and Vietnam. Identify it.", options:["Irrawaddy", "Mekong River", "Chao Phraya", "Salween"], answer:1, category:"Geography"},
@@ -659,12 +571,11 @@ const QUESTIONS = [
   {q:"A collaboratively edited online encyclopedia launched in 2001 allows volunteers to create and revise articles. Identify it.", options:["Wikipedia", "Britannica", "Wikileaks", "Internet Archive"], answer:0, category:"Science & Tech"},
   {q:"An open-source operating-system kernel created by Linus Torvalds in 1991 underpins many servers and Android devices. Identify it.", options:["DOS", "Linux", "Windows NT", "macOS"], answer:1, category:"Science & Tech"},
   {q:"A blockchain platform supports smart contracts and a native cryptocurrency called ether. Identify it.", options:["Solana", "Bitcoin", "Ethereum", "Litecoin"], answer:2, category:"Science & Tech"},
-  {q:"An electric-vehicle and clean-energy company takes its name from inventor Nikola Tesla. Identify it.", options:["Rivian", "BYD", "Lucid Motors", "Tesla"], answer:3, category:"Brands & Games"},
+  {q:"An electric-vehicle and clean-energy company founded in 2003 sold its first car, the Roadster, in 2008 and later became the world’s most valuable carmaker. Identify it.", options:["Rivian", "BYD", "Lucid Motors", "Tesla"], answer:3, category:"Brands & Games"},
   {q:"A Danish toy company became famous for interlocking plastic bricks; its name derives from Danish words meaning “play well.” Identify it.", options:["LEGO", "Hasbro", "Mattel", "Playmobil"], answer:0, category:"Brands & Games"},
   {q:"A widely used image-editing application became so influential that its name is often used informally as a verb for image manipulation. Identify it.", options:["Illustrator", "Adobe Photoshop", "InDesign", "Premiere Pro"], answer:1, category:"Science & Tech"},
   {q:"A video-sharing platform launched in 2005 and later became part of Google. Identify it.", options:["Vimeo", "Twitch", "YouTube", "Dailymotion"], answer:2, category:"Science & Tech"},
   {q:"An online retailer founded by Jeff Bezos began as a bookseller before expanding into cloud computing and many product categories. Identify it.", options:["Walmart", "eBay", "Alibaba", "Amazon"], answer:3, category:"Brands & Games"},
-  {q:"A square, two-dimensional code developed in Japan can encode data that smartphones can scan. Identify it.", options:["QR code", "ISBN", "UPC", "NFC"], answer:0, category:"Science & Tech"},
   {q:"An Indian batter became known for chasing targets and has scored centuries across international formats. Identify him.", options:["KL Rahul", "Virat Kohli", "Rohit Sharma", "Shikhar Dhawan"], answer:1, category:"Sports"},
   {q:"An Indian boxer from Manipur won multiple world championships and an Olympic bronze medal in 2012. Identify her.", options:["Nikhat Zareen", "Lovlina Borgohain", "Mary Kom", "Saina Nehwal"], answer:2, category:"Sports"},
   {q:"An Indian chess grandmaster became the youngest undisputed World Chess Champion in 2024. Identify him.", options:["R. Praggnanandhaa", "Arjun Erigaisi", "Viswanathan Anand", "D. Gukesh"], answer:3, category:"Sports"},
@@ -820,7 +731,7 @@ const QUESTIONS = [
   {q:"A spicy, tangy curry from Goa descends from a Portuguese dish of meat marinated in wine and garlic. Identify it.", options:["Korma", "Vindaloo", "Rogan josh", "Jalfrezi"], answer:1, category:"Food"},
   {q:"The seeds of the cacao tree, first cultivated in Mesoamerica, are fermented, roasted and ground to make which sweet treat?", options:["Vanilla", "Caramel", "Chocolate", "Marzipan"], answer:2, category:"Food"},
   {q:"A Japanese dish of seafood or vegetables coated in light batter and deep-fried is believed to have been introduced by Portuguese traders. Identify it.", options:["Katsu", "Yakitori", "Takoyaki", "Tempura"], answer:3, category:"Food"},
-  {q:"A South Indian drink of strong coffee decoction mixed with hot milk is traditionally served in a steel tumbler and saucer called a dabarah. Identify it.", options:["Filter coffee", "Lassi", "Thandai", "Jaljeera"], answer:0, category:"Food"},
+  {q:"A South Indian hot drink brewed by slow-dripping through a metal filter is traditionally served in a steel tumbler and saucer called a dabarah. Identify it.", options:["Filter coffee", "Masala chai", "Sulaimani", "Kahwa"], answer:0, category:"Food"},
   {q:"The highest mountain in the Alps rises on the border between France and Italy. Identify it.", options:["The Matterhorn", "Mont Blanc", "The Eiger", "Monte Rosa"], answer:1, category:"Geography"},
   {q:"A vast cold desert in northern China and southern Mongolia is known for important dinosaur fossil discoveries. Identify it.", options:["Taklamakan Desert", "Kalahari Desert", "Gobi Desert", "Mojave Desert"], answer:2, category:"Geography"},
   {q:"The longest river in Asia flows from the Tibetan Plateau across China to the East China Sea. Identify it.", options:["Yellow River", "Indus River", "Brahmaputra River", "Yangtze River"], answer:3, category:"Geography"},
@@ -829,7 +740,7 @@ const QUESTIONS = [
   {q:"The world's highest mountain range stretches across Nepal, India, Bhutan, China and Pakistan. Identify it.", options:["Alps", "Rocky Mountains", "Himalayas", "Ural Mountains"], answer:2, category:"Geography"},
   {q:"A man-made waterway across Central America links the Atlantic and Pacific Oceans and opened in 1914. Identify it.", options:["Corinth Canal", "Kiel Canal", "Erie Canal", "Panama Canal"], answer:3, category:"Geography"},
   {q:"A waterway in Egypt connects the Mediterranean Sea and the Red Sea, shortening the voyage between Europe and Asia. Identify it.", options:["Suez Canal", "Welland Canal", "Grand Canal", "Volga–Don Canal"], answer:0, category:"Geography"},
-  {q:"The capital of Canada lies on the Ottawa River in the province of Ontario. Identify the city.", options:["Toronto", "Ottawa", "Montreal", "Vancouver"], answer:1, category:"Geography"},
+  {q:"A national capital in North America sits on the border between Ontario and Quebec and was chosen by Queen Victoria in 1857. Identify the city.", options:["Toronto", "Ottawa", "Montreal", "Vancouver"], answer:1, category:"Geography"},
   {q:"The capital of Turkey is an inland city on the Anatolian plateau, not the country's largest city. Identify it.", options:["Istanbul", "Izmir", "Ankara", "Bursa"], answer:2, category:"Geography"},
   {q:"The capital of New Zealand lies on Cook Strait at the southern tip of the North Island and is known for its wind. Identify it.", options:["Auckland", "Christchurch", "Queenstown", "Wellington"], answer:3, category:"Geography"},
   {q:"Egypt's capital, the largest city in the Arab world, lies on the Nile close to the Giza pyramids. Identify it.", options:["Cairo", "Alexandria", "Luxor", "Aswan"], answer:0, category:"Geography"},
@@ -1063,7 +974,13 @@ function leaveOk(){
   if(PT && !PT.finished){ if(!confirm(PT.isHost ? "End the party for everyone?" : "Leave the party?")) return false; partyLeave(); return true; }
   if(Q || MM || DU) return true;
   if(S && !S.finished) return confirm("Leave this run? Your score won't be saved.");
-  return !D || confirm("Leave this duel? It won't count.");
+  if(!D) return true;
+  // Quitting a bot duel counts as a loss, so rating can't be farmed by leaving lost games.
+  if(!confirm("Leave this duel? It counts as a loss.")) return false;
+  clearTimers();
+  applyResult("loss", D.bot.name, D.bot.rating, "bot");
+  D = null;
+  return true;
 }
 function doLogout(){
   if(!leaveOk()) return;
@@ -1263,6 +1180,11 @@ function showDash(){
   $("m-friends").onclick = () => onlineGate(showFriends);
   $("m-quiz").onclick = () => onlineGate(showQuizHub);
   $("m-prof").onclick = showProfile;
+  if(!CLOUD){
+    // No online service configured: hide the buttons that can only show "not set up", and lead with what works.
+    ["m-online","m-friend","m-2v2","m-party","m-friends","m-quiz"].forEach(id => $(id).hidden = true);
+    $("m-solo").classList.add("hero");
+  }
   if(friendsOn()){ startFriendWatch(); FW.onChange = null; updateFriendBadge(); startPresence(); }
   if($("gologin")) $("gologin").onclick = () => showAuth("signup");
   getBoard().then(({rows}) => {
@@ -1644,16 +1566,8 @@ function finish(){
   clearTimers();
   const you = D.hp.you, opp = D.hp.opp;
   const result = you > opp ? "win" : you < opp ? "loss" : "draw";
-  const score = result === "win" ? 1 : result === "loss" ? 0 : 0.5;
-  const expected = 1 / (1 + Math.pow(10, (D.bot.rating - save.rating) / 400));
-  const delta = Math.round(32 * (score - expected));
-  const before = save.rating;
-  save.rating = Math.max(100, save.rating + delta);
-  save[result === "win" ? "wins" : result === "loss" ? "losses" : "draws"]++;
-  save.history = [{bot:D.bot.name, result, delta}].concat(save.history).slice(0, 8);
-  logGame({mode:"bot", title:`vs ${D.bot.name}`, result, delta});
+  const delta = applyResult(result, D.bot.name, D.bot.rating, "bot");
   if(isQuizKey(D.cat) && D.answered) recordQuizPlay(D.cat.slice(5), D.correct / D.answered);
-  persist(); updateChip();
 
   const title = result === "win" ? "Victory" : result === "loss" ? "Defeat" : "Draw";
   const how = opp <= 0 ? "You knocked them out." : you <= 0 ? `${D.bot.name} knocked you out.` : "Decided on health after the last question.";
@@ -1692,14 +1606,15 @@ const errText = e => e && e.code === "permission-denied"
   ? "Online features are very busy right now (the daily limit has been reached). Please try again later."
   : "Something went wrong. Check your connection and try again.";
 
-function applyResult(result, oppName, oppRating){
+// The one place a duel result changes rating. Used by bot duels and online duels.
+function applyResult(result, oppName, oppRating, mode = "online"){
   const score = result === "win" ? 1 : result === "loss" ? 0 : 0.5;
   const expected = 1 / (1 + Math.pow(10, (oppRating - save.rating) / 400));
   const delta = Math.round(32 * (score - expected));
   save.rating = Math.max(100, save.rating + delta);
   save[result === "win" ? "wins" : result === "loss" ? "losses" : "draws"]++;
   save.history = [{bot:oppName, result, delta}].concat(save.history).slice(0, 8);
-  logGame({mode:"online", title:`vs ${oppName}`, result, delta});
+  logGame({mode, title:`vs ${oppName}`, result, delta});
   persist(); updateChip();
   return delta;
 }
@@ -1992,7 +1907,6 @@ function resolveRound(a){
     const tw = Math.min(TIME, Math.max(0, a[w].t));
     const dmg = 15 + Math.round(10 * (1 - tw / TIME));
     const loser = w === "host" ? "guest" : "host";
-    const name = esc(o.oppName);
     if(loser === o.me){
       o.hp.you = Math.max(0, o.hp.you - dmg);
       msg = oppOK && meOK ? `Both right, but ${o.oppName} was faster. You take ${dmg}.`
