@@ -42,7 +42,7 @@ h1,h2{font-family:var(--display);font-weight:400;letter-spacing:.01em;margin:0}
 h1{font-size:clamp(1.9rem,4vw,2.6rem);font-weight:400;line-height:1.1}
 .sub{color:var(--muted);margin:8px 0 22px;max-width:56ch}
 
-.panel{background:color-mix(in srgb,var(--surface) 82%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:var(--r);padding:26px}
+.panel{background:color-mix(in srgb,var(--surface) 82%,transparent);border:1px solid var(--line);border-radius:var(--r);padding:26px}
 .lobby{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;align-items:start}
 @media (max-width:760px){.lobby{grid-template-columns:1fr}}
 
@@ -119,7 +119,7 @@ select{background:var(--surface);border:1.5px solid var(--line);border-radius:va
 .dash{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;align-items:start;padding-top:8px}
 @media (max-width:760px){.dash{grid-template-columns:1fr}}
 .menu{display:grid;gap:12px}
-.mbtn{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;width:100%;padding:20px 24px;border-radius:var(--r);border:1px solid var(--line);background:color-mix(in srgb,var(--surface) 72%,transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);transition:transform .15s,border-color .15s}
+.mbtn{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;width:100%;padding:20px 24px;border-radius:var(--r);border:1px solid var(--line);background:color-mix(in srgb,var(--surface) 72%,transparent);transition:transform .15s,border-color .15s}
 .mbtn:hover{border-color:var(--you);transform:translateY(-2px)}
 .mbtn b{font-family:var(--display);font-size:1.35rem;letter-spacing:.01em}
 .mbtn span{color:var(--muted)}
@@ -755,7 +755,37 @@ const QUESTIONS = [
   {q:"Charlotte Brontë's 1847 novel follows an orphaned governess who becomes close to her mysterious employer at Thornfield Hall. Identify it.", options:["Wuthering Heights", "Jane Eyre", "Rebecca", "Persuasion"], answer:1, category:"Arts & Literature"},
   {q:"A 1994 drama based on a Stephen King novella follows a banker wrongly imprisoned for murder who forms a lasting friendship with a fellow inmate named Red. Identify the film.", options:["Forrest Gump", "The Green Mile", "The Shawshank Redemption", "Pulp Fiction"], answer:2, category:"Film & Music"},
   {q:"Which country won the 2018 FIFA World Cup, beating Croatia in the final in Moscow?", options:["Belgium", "Brazil", "England", "France"], answer:3, category:"Sports"},
-  {q:"The largest country in the world by area spans eleven time zones across eastern Europe and northern Asia. Identify it.", options:["Russia", "Canada", "China", "The United States"], answer:0, category:"Geography"}
+  {q:"The largest country in the world by area spans eleven time zones across eastern Europe and northern Asia. Identify it.", options:["Russia", "Canada", "China", "The United States"], answer:0, category:"Geography"},
+  {q:"How many keys does a standard modern piano have?",options:["76","88","92","100"],answer:1,category:"Film & Music"},
+  {q:"In music, what does the marking “forte” tell a performer to do?",options:["Play slowly","Play loudly","Play softly","Repeat the section"],answer:1,category:"Film & Music"},
+  {q:"Which studio made Toy Story, the first feature-length computer-animated film?",options:["DreamWorks","Pixar","Illumination","Blue Sky"],answer:1,category:"Film & Music"},
+  {q:"How many strings does a standard violin have?",options:["3","4","5","6"],answer:1,category:"Film & Music"},
+  {q:"Which instrument is the sitar maestro Ravi Shankar most associated with?",options:["Sitar","Sarod","Santoor","Veena"],answer:0,category:"Film & Music"},
+  {q:"Which singer is known as the “Queen of Soul”?",options:["Diana Ross","Whitney Houston","Tina Turner","Aretha Franklin"],answer:3,category:"Film & Music"},
+  {q:"What is the top prize at the Cannes Film Festival called?",options:["Golden Bear","Palme d’Or","Golden Lion","Silver Lotus"],answer:1,category:"Film & Music"},
+  {q:"The tabla belongs to which family of instruments?",options:["Flutes","Drums","Bowed strings","Reed pipes"],answer:1,category:"Film & Music"},
+  {q:"In chess, which piece moves only diagonally?",options:["Rook","Knight","Bishop","Pawn"],answer:2,category:"Brands & Games"},
+  {q:"Which Nintendo handheld console launched in 1989 and made Tetris a hit?",options:["Game Boy","Game Gear","Lynx","PlayStation Portable"],answer:0,category:"Brands & Games"},
+  {q:"How many squares are on a standard chessboard?",options:["48","56","64","72"],answer:2,category:"Brands & Games"},
+  {q:"In standard Monopoly (US), how much money do you collect for passing Go?",options:["$100","$150","$200","$250"],answer:2,category:"Brands & Games"},
+  {q:"What is the highest possible score with three darts in one turn?",options:["150","171","180","200"],answer:2,category:"Brands & Games"},
+  {q:"Which Indian group’s car company bought Jaguar and Land Rover in 2008?",options:["Tata Motors","Mahindra","Maruti Suzuki","Bajaj Auto"],answer:0,category:"Brands & Games"},
+  {q:"How many tiles does each player start with in Scrabble?",options:["5","6","7","9"],answer:2,category:"Brands & Games"},
+  {q:"Paneer is made by curdling which liquid?",options:["Coconut milk","Soy milk","Milk","Buttermilk"],answer:2,category:"Food"},
+  {q:"Traditional Japanese sake is brewed from which grain?",options:["Barley","Wheat","Millet","Rice"],answer:3,category:"Food"},
+  {q:"Which fruit is the main ingredient of guacamole?",options:["Avocado","Lime","Tomatillo","Mango"],answer:0,category:"Food"},
+  {q:"Dosa batter is traditionally made from rice and which lentil?",options:["Toor dal","Masoor dal","Urad dal","Moong dal"],answer:2,category:"Food"},
+  {q:"Hummus is mainly made from which legume?",options:["Lentils","Black beans","Chickpeas","Peas"],answer:2,category:"Food"},
+  {q:"Which Italian cheese is traditionally used on a Margherita pizza?",options:["Parmesan","Mozzarella","Gorgonzola","Ricotta"],answer:1,category:"Food"},
+  {q:"Tofu is made from which crop?",options:["Peanuts","Soybeans","Corn","Oats"],answer:1,category:"Food"},
+  {q:"In which year did India gain independence?",options:["1942","1945","1947","1950"],answer:2,category:"History & World"},
+  {q:"Which ancient wonder stood on the island of Pharos near Alexandria?",options:["A lighthouse","A hanging garden","A giant statue","A temple of Artemis"],answer:0,category:"History & World"},
+  {q:"Who was the first President of the United States?",options:["John Adams","Thomas Jefferson","Benjamin Franklin","George Washington"],answer:3,category:"History & World"},
+  {q:"Which empire built the Colosseum in Rome?",options:["Byzantine Empire","Roman Empire","Ottoman Empire","Greek Empire"],answer:1,category:"History & World"},
+  {q:"In which year did the Berlin Wall fall?",options:["1961","1975","1989","1991"],answer:2,category:"History & World"},
+  {q:"Which ocean liner sank on its maiden voyage in April 1912?",options:["Lusitania","Britannic","Titanic","Queen Mary"],answer:2,category:"History & World"},
+  {q:"Which civilisation built Machu Picchu?",options:["Aztec","Maya","Olmec","Inca"],answer:3,category:"History & World"},
+  {q:"Which conflict ended in 1945 with the surrender of Germany and Japan?",options:["World War I","The Cold War","The Korean War","World War II"],answer:3,category:"History & World"},
 ];
 
 /* ---------------- Settings ---------------- */
@@ -982,6 +1012,14 @@ function leaveOk(){
   D = null;
   return true;
 }
+// Closing or reloading the tab mid-duel must not be a free escape from a loss.
+addEventListener("pagehide", ev => {
+  if(ev.persisted) return;   // page is only being cached for back/forward, not closed
+  try{
+    if(O && !O.finished) forfeitOnline();
+    else if(D && D.bot && !PT && !Q && !MM){ clearTimers(); applyResult("loss", D.bot.name, D.bot.rating, "bot"); D = null; }
+  }catch(e){}
+});
 function doLogout(){
   if(!leaveOk()) return;
   clearTimers(); D = null;
@@ -1919,11 +1957,12 @@ function resolveRound(a){
   const ok = r => r.i >= 0 && opts[r.i] && opts[r.i].c;
   const hOK = ok(a.host), gOK = ok(a.guest);
   let w = null;
-  if(hOK && gOK) w = a.host.t <= a.guest.t ? "host" : "guest";
+  let tie = false;
+  if(hOK && gOK){ if(a.host.t === a.guest.t) tie = true; else w = a.host.t < a.guest.t ? "host" : "guest"; }
   else if(hOK) w = "host";
   else if(gOK) w = "guest";
   const meOK = o.me === "host" ? hOK : gOK, oppOK = o.me === "host" ? gOK : hOK;
-  let msg = "Both missed. No damage.";
+  let msg = tie ? "Both right in exactly the same time. No damage." : "Both missed. No damage.";
   if(w){
     const tw = Math.min(TIME, Math.max(0, a[w].t));
     const dmg = 15 + Math.round(10 * (1 - tw / TIME));
@@ -2305,7 +2344,15 @@ async function joinParty(code){
   const ps = await c.ref.collection("players").get();
   const live = ps.docs.filter(d => !d.data().left);
   if(!ps.docs.some(d => d.id === session.uid) && live.length >= partyCap(pd.data().mode)) throw new Error("full");
+  const cap = partyCap(pd.data().mode);
   await c.ref.collection("players").doc(session.uid).set({name:session.name, joined:Date.now()});
+  // Two people can pass the check above at the same moment. Re-count after joining; whoever joined last backs out.
+  const after = (await c.ref.collection("players").get()).docs.filter(d => !d.data().left)
+    .sort((x, y) => (x.data().joined - y.data().joined) || (x.id < y.id ? -1 : 1));
+  if(after.findIndex(d => d.id === session.uid) >= cap){
+    await c.ref.collection("players").doc(session.uid).delete().catch(() => {});
+    throw new Error("full");
+  }
   enterParty(c.ref, false);
 }
 
@@ -3437,11 +3484,12 @@ async function mmScan(mm){
   if(!mm || mm.scanning || MM !== mm) return false;
   mm.scanning = true;
   try{
-    const snap = await fcol("queue2v2").where("status","==","waiting").limit(30).get();
+    // Only tickets seen recently (single-field range, so no extra index). Dead tickets are old, so they never fill the 30.
+    const snap = await fcol("queue2v2").where("seen", ">", Date.now() - MM_STALE_MS).limit(30).get();
     if(MM !== mm) return false;
     const now = Date.now();
     const others = snap.docs.map(d => Object.assign({id:d.id}, d.data()))
-      .filter(t => t.id !== mm.id && now - (t.seen || 0) < MM_STALE_MS && Array.isArray(t.uids) && !t.uids.some(u => mm.uids.includes(u)))
+      .filter(t => t.status === "waiting" && t.id !== mm.id && now - (t.seen || 0) < MM_STALE_MS && Array.isArray(t.uids) && !t.uids.some(u => mm.uids.includes(u)))
       .sort((a,b) => a.createdMs - b.createdMs);
     const pick = pickMatch({id:mm.id, uids:mm.uids, names:mm.names}, others);
     return pick ? await mmAssemble(mm, pick) : false;
@@ -3457,19 +3505,18 @@ async function mmAssemble(mm, pick){
   const qids = shuffle(QUESTIONS.map((_, i) => i)).slice(0, MM_QUESTIONS);
   const perm = qids.map(i => shuffle(QUESTIONS[i].options.map((_, j) => j)).join(""));
   const ref = fcol("parties").doc(), uids = Object.keys(teams);
-  await ref.set({hostUid:session.uid, hostName:session.name, code:"", phase:"lobby", cur:0, createdMs:Date.now(),
-    settings:{n:qids.length, cat:"all"}, mode:"duel2v2", matchmade:true, qids, perm, teams, teamInfo:info, hp:{0:START_HP, 1:START_HP}});
-  for(const u of uids) await ref.collection("players").doc(u).set({name:nameOf[u], joined:Date.now()});
-  try{   // claim every ticket in one step, so two people can never build the same match
+  const party = {hostUid:session.uid, hostName:session.name, code:"", phase:"lobby", cur:0, createdMs:Date.now(),
+    settings:{n:qids.length, cat:"all"}, mode:"duel2v2", matchmade:true, qids, perm, teams, teamInfo:info, hp:{0:START_HP, 1:START_HP}};
+  try{   // one atomic step: claim every ticket and create the party, so two people can never build the same match
     await fb.fs.runTransaction(async tx => {
       const refs = pick.tickets.map(t => fcol("queue2v2").doc(t.id)), snaps = [];
       for(const r of refs) snaps.push(await tx.get(r));
-      snaps.forEach((s, i) => { if(i === 0 && !s.exists) return; if(!s.exists || s.data().status !== "waiting") throw new Error("taken"); });
+      snaps.forEach((sn, i) => { if(i === 0 && !sn.exists) return; if(!sn.exists || sn.data().status !== "waiting") throw new Error("taken"); });
       refs.forEach((r, i) => { if(i === 0 && !snaps[0].exists) return; tx.update(r, {status:"matched", partyId:ref.id}); });
+      tx.set(ref, party);
+      uids.forEach(u => tx.set(ref.collection("players").doc(u), {name:nameOf[u], joined:Date.now()}));
     });
   }catch(e){
-    for(const u of uids) await ref.collection("players").doc(u).delete().catch(() => {});
-    await ref.delete().catch(() => {});
     return false;
   }
   await mmEnter(mm, ref, true);
