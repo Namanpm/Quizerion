@@ -1374,7 +1374,20 @@ function showHome(){
   <footer class="lp-foot">Quizerion: quiz duels, one question at a time.</footer>`;
   const go = () => session ? showDash() : showAuth("login");
   $("lp-play").onclick = go;
-  $("lp-how").onclick = () => { const e = $("expect"); if(e && e.scrollIntoView) e.scrollIntoView({behavior:"smooth", block:"start"}); };
+  $("lp-how").onclick = () => {
+    const play = $("lp-play"), how = $("lp-how"), e = $("expect");
+    // Swap the two buttons' looks while the page scrolls to "how it works", then put them back.
+    const swap = on => {
+      play.className = on ? "ghost-w" : "primary lg";
+      how.className = on ? "primary lg" : "ghost-w";
+    };
+    swap(true);
+    let done = false, t;
+    const restore = () => { if(done) return; done = true; clearTimeout(t); removeEventListener("scrollend", restore); swap(false); };
+    addEventListener("scrollend", restore);
+    t = setTimeout(restore, 1500);   // fallback for browsers without scrollend, or if nothing scrolls
+    if(e && e.scrollIntoView) e.scrollIntoView({behavior:"smooth", block:"start"});
+  };
   $("lp-signup").onclick = () => showAuth("signup");
   $("lp-guest").onclick = () => { if(!session){ session = {guest:true}; save = defaults(); } showDash(); };
   $("lp-ics").onclick = () => downloadReminder($("lp-time").value);
