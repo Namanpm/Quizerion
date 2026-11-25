@@ -1475,25 +1475,16 @@ function showHome(){
   $("lp-how").onclick = () => {
     const e = $("expect"); if(e && e.scrollIntoView) e.scrollIntoView({behavior:"smooth", block:"start"});
     playFirst();   // once clicked, "Play now" takes the blue highlight
-    try{ localStorage.setItem(SEEN, "1"); }catch(err){}
   };
-  // "See how it works" is the highlighted button until the visitor has scrolled through the explainer
-  // (down to the closing "join" band). Then "Play now" takes the highlight, and stays that way on later visits.
-  const SEEN = "quizerion.seenHow";
-  const playFirst = () => { $("lp-play").className = "primary lg"; $("lp-how").className = "ghost-w"; };
-  let seen = false;
-  try{ seen = localStorage.getItem(SEEN) === "1"; }catch(e){}
+  // Every visit starts with "See how it works" highlighted. It swaps with "Play now" once the visitor clicks it
+  // or has scrolled down to the closing "join" band. Nothing is remembered, so a reload starts fresh.
+  const playFirst = () => { $("lp-play").className = "primary lg"; $("lp-how").className = "ghost-w"; removeEventListener("scroll", check); };
   const end = $("join");
-  if(seen || !end) playFirst();
-  else{
-    const check = () => {
-      if(!document.body.contains(end)){ removeEventListener("scroll", check); return; }   // left the landing page
-      if(end.getBoundingClientRect().top >= innerHeight) return;                          // not reached the end yet
-      removeEventListener("scroll", check); playFirst();
-      try{ localStorage.setItem(SEEN, "1"); }catch(e){}
-    };
-    addEventListener("scroll", check, {passive:true});
-  }
+  const check = () => {
+    if(!end || !document.body.contains(end)){ removeEventListener("scroll", check); return; }   // left the landing page
+    if(end.getBoundingClientRect().top < innerHeight) playFirst();                             // reached the end
+  };
+  addEventListener("scroll", check, {passive:true});
   $("lp-signup").onclick = () => showAuth("signup");
   $("lp-guest").onclick = () => { if(!session){ session = {guest:true}; save = defaults(); } showDash(); };
   $("lp-ics").onclick = () => downloadReminder($("lp-time").value);
