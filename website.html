@@ -1374,7 +1374,11 @@ function showHome(){
   <footer class="lp-foot">Quizerion: quiz duels, one question at a time.</footer>`;
   const go = () => session ? showDash() : showAuth("login");
   $("lp-play").onclick = go;
-  $("lp-how").onclick = () => { const e = $("expect"); if(e && e.scrollIntoView) e.scrollIntoView({behavior:"smooth", block:"start"}); };
+  $("lp-how").onclick = () => {
+    const e = $("expect"); if(e && e.scrollIntoView) e.scrollIntoView({behavior:"smooth", block:"start"});
+    playFirst();   // once clicked, "Play now" takes the blue highlight
+    try{ localStorage.setItem(SEEN, "1"); }catch(err){}
+  };
   // "See how it works" is the highlighted button until the visitor has scrolled through the explainer
   // (down to the closing "join" band). Then "Play now" takes the highlight, and stays that way on later visits.
   const SEEN = "quizerion.seenHow";
