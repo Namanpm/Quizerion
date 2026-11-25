@@ -1319,7 +1319,7 @@ function showHome(){
       <div class="lp-kicker">Live quiz duels</div>
       <h1>Answer faster than the person across from you</h1>
       <p class="lp-lead">Quizerion is a head-to-head quiz. Every question is a clash, and the quicker correct answer lands the hit. Play on your own, with friends, or in teams.</p>
-      <div class="lp-cta"><button class="primary lg" id="lp-play">Play now</button><button class="ghost-w" id="lp-how">See how it works</button></div>
+      <div class="lp-cta"><button class="ghost-w" id="lp-play">Play now</button><button class="primary lg" id="lp-how">See how it works</button></div>
       <ul class="lp-pills"><li>1v1 duels</li><li>2v2 teams</li><li>Parties of up to 50</li><li>Daily streaks</li></ul>
     </div>
   </section>
@@ -1374,20 +1374,24 @@ function showHome(){
   <footer class="lp-foot">Quizerion: quiz duels, one question at a time.</footer>`;
   const go = () => session ? showDash() : showAuth("login");
   $("lp-play").onclick = go;
-  $("lp-how").onclick = () => {
-    const play = $("lp-play"), how = $("lp-how"), e = $("expect");
-    // Swap the two buttons' looks while the page scrolls to "how it works", then put them back.
-    const swap = on => {
-      play.className = on ? "ghost-w" : "primary lg";
-      how.className = on ? "primary lg" : "ghost-w";
+  $("lp-how").onclick = () => { const e = $("expect"); if(e && e.scrollIntoView) e.scrollIntoView({behavior:"smooth", block:"start"}); };
+  // "See how it works" is the highlighted button until the visitor has scrolled through the explainer
+  // (down to the closing "join" band). Then "Play now" takes the highlight, and stays that way on later visits.
+  const SEEN = "quizerion.seenHow";
+  const playFirst = () => { $("lp-play").className = "primary lg"; $("lp-how").className = "ghost-w"; };
+  let seen = false;
+  try{ seen = localStorage.getItem(SEEN) === "1"; }catch(e){}
+  const end = $("join");
+  if(seen || !end) playFirst();
+  else{
+    const check = () => {
+      if(!document.body.contains(end)){ removeEventListener("scroll", check); return; }   // left the landing page
+      if(end.getBoundingClientRect().top >= innerHeight) return;                          // not reached the end yet
+      removeEventListener("scroll", check); playFirst();
+      try{ localStorage.setItem(SEEN, "1"); }catch(e){}
     };
-    swap(true);
-    let done = false, t;
-    const restore = () => { if(done) return; done = true; clearTimeout(t); removeEventListener("scrollend", restore); swap(false); };
-    addEventListener("scrollend", restore);
-    t = setTimeout(restore, 1500);   // fallback for browsers without scrollend, or if nothing scrolls
-    if(e && e.scrollIntoView) e.scrollIntoView({behavior:"smooth", block:"start"});
-  };
+    addEventListener("scroll", check, {passive:true});
+  }
   $("lp-signup").onclick = () => showAuth("signup");
   $("lp-guest").onclick = () => { if(!session){ session = {guest:true}; save = defaults(); } showDash(); };
   $("lp-ics").onclick = () => downloadReminder($("lp-time").value);
