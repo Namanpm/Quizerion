@@ -30,7 +30,9 @@ button,select{font:inherit;color:inherit}
 button{cursor:pointer}
 :focus-visible{outline:3px solid var(--you);outline-offset:2px}
 
-.top{display:flex;align-items:center;justify-content:space-between;max-width:980px;margin:0 auto;padding:18px 20px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;max-width:980px;margin:0 auto;padding:18px 20px}
+.top button,.top .chip{white-space:nowrap}
+@media (max-width:430px){.top{padding:14px 14px;gap:8px}.top .brand,.top #authbtn{flex-shrink:0}.top .acct{min-width:0;flex:0 1 auto}.top .chip{padding:6px 10px;gap:6px;flex:0 1 auto;min-width:0;overflow:hidden}.top .chip small{display:none}}
 .brand{display:inline-flex;align-items:center;gap:10px;font-family:var(--display);font-size:1.5rem;letter-spacing:.01em;background:none;border:0;padding:0}
 .logo{height:32px;width:auto;display:block}
 .logo.big{height:88px;margin-bottom:16px}
@@ -44,7 +46,7 @@ h1{font-size:clamp(1.9rem,4vw,2.6rem);font-weight:400;line-height:1.1}
 
 .panel{background:color-mix(in srgb,var(--surface) 82%,transparent);border:1px solid var(--line);border-radius:var(--r);padding:26px}
 .lobby{display:grid;grid-template-columns:1.5fr 1fr;gap:18px;align-items:start}
-@media (max-width:760px){.lobby{grid-template-columns:1fr}}
+@media (max-width:760px){.lobby{grid-template-columns:minmax(0,1fr)}}
 
 .bots{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-bottom:20px}
 .bot{display:flex;align-items:center;gap:14px;text-align:left;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);padding:12px 14px}
@@ -76,7 +78,7 @@ select{background:var(--surface);border:1.5px solid var(--line);border-radius:va
 /* duel */
 .duel{display:grid;gap:12px}
 .side{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 16px}
-.side .who{min-width:120px}
+.side .who{min-width:0;flex:1 1 auto}
 .side .who b{display:block;font-family:var(--display);font-size:1.1rem;line-height:1.2}
 .side .who span{color:var(--muted);font-size:.9rem}
 .hp{flex:1;height:16px;border-radius:var(--r);background:var(--line);overflow:hidden}
@@ -117,7 +119,10 @@ select{background:var(--surface);border:1.5px solid var(--line);border-radius:va
 
 /* dashboard */
 .dash{display:grid;grid-template-columns:1.25fr 1fr;gap:18px;align-items:start;padding-top:8px}
-@media (max-width:760px){.dash{grid-template-columns:1fr}}
+@media (max-width:760px){.dash{grid-template-columns:minmax(0,1fr)}}
+.dash>*{min-width:0}
+.side-col,.main-col{grid-template-columns:minmax(0,1fr)}
+.side .who b,.nm,.lb span{overflow-wrap:anywhere}
 .menu{display:grid;gap:12px}
 .mbtn{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;width:100%;padding:20px 24px;border-radius:var(--r);border:1px solid var(--line);background:color-mix(in srgb,var(--surface) 72%,transparent);transition:transform .15s,border-color .15s}
 .mbtn:hover{border-color:var(--you);transform:translateY(-2px)}
@@ -130,6 +135,7 @@ select{background:var(--surface);border:1.5px solid var(--line);border-radius:va
 .side-col{display:grid;gap:18px}
 .who2{display:flex;align-items:center;gap:14px}
 .who2 b{display:block;font-family:var(--display);font-size:1.2rem;line-height:1.2}
+.who2>div:not(.rating){min-width:0}.who2 b{overflow-wrap:anywhere}.who2 .avatar,.who2 .rating{flex-shrink:0}
 .who2 .rating{margin-left:auto;font-size:2.2rem}
 .avatar.big{width:56px;height:56px;font-size:1.5rem}
 .tier{display:inline-block;margin-top:3px;padding:2px 10px;border-radius:var(--r);background:color-mix(in srgb,var(--gold) 18%,transparent);color:var(--gold);font-weight:600;font-size:.85rem}
@@ -892,7 +898,7 @@ function loadProgress(key){
   return defaults();
 }
 // The last 30 games of every kind, shown on the profile page.
-function logGame(g){ save.games = [Object.assign({t:Date.now()}, g)].concat(save.games || []).slice(0, 30); touchStreak(); }
+function logGame(g, noStreak){ save.games = [Object.assign({t:Date.now()}, g)].concat(save.games || []).slice(0, 30); if(!noStreak) touchStreak(); }
 
 // Daily streak: a day counts when you finish at least one game of any kind.
 const dayKey = t => { const d = new Date(t); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
@@ -1003,13 +1009,14 @@ async function cloudLoad(uid){
   const x = d.data();
   return {name:x.name, save:Object.assign(defaults(), {rating:x.rating, wins:x.wins, losses:x.losses, draws:x.draws, history:x.history || [], solo:x.solo || {}, games:x.games || [], streak:x.streak || {count:0, best:0, last:""}, days:x.days || []})};
 }
-function cloudSave(){
+function cloudSaveStrict(){
   if(!(fb && session && session.uid)) return Promise.resolve();
   return fb.fs.collection("players").doc(session.uid).set({
     name:session.name, nameLower:(session.name || "").toLowerCase(), rating:save.rating, wins:save.wins, losses:save.losses, draws:save.draws,
     history:save.history, solo:save.solo || {}, games:save.games || [], streak:save.streak || {count:0, best:0, last:""}, days:save.days || [], updatedAt:firebase.firestore.FieldValue.serverTimestamp()
-  }).catch(e => console.error("Save failed", e));
+  });
 }
+function cloudSave(){ return cloudSaveStrict().catch(e => console.error("Save failed", e)); }   // background saves stay best-effort
 function cloudErr(e){
   const c = e && e.code || "";
   if(c === "auth/email-already-in-use") return "That email already has an account. Log in instead.";
@@ -1018,7 +1025,10 @@ function cloudErr(e){
   if(/wrong-password|user-not-found|invalid-credential|invalid-login/.test(c)) return "Wrong email or password.";
   if(c === "auth/too-many-requests") return "Too many attempts. Wait a moment and try again.";
   if(c === "auth/network-request-failed") return "Can’t reach the server. Check your connection.";
-  return (e && e.message) || "Something went wrong. Try again.";
+  if(c === "auth/operation-not-allowed" || c === "auth/configuration-not-found") return "Online sign-in isn’t switched on for this site yet.";
+  if(c === "permission-denied") return "The server refused the request. Please try again later.";
+  const m = (e && e.message) || "";
+  return m && !/^Firebase:/i.test(m) ? m : "Something went wrong. Try again.";   // never show raw Firebase developer text
 }
 async function signUpCloud(email, pw, display){
   if(!USER_RE.test(display)) throw new Error("Use 3–20 letters, numbers or underscores for your display name.");
@@ -1027,13 +1037,20 @@ async function signUpCloud(email, pw, display){
   const carry = session && session.guest && (save.wins + save.losses + save.draws > 0);
   save = carry ? save : defaults();
   session = {name:display, uid:cred.user.uid};
-  await cloudSave();
+  try{ if(cred.user.updateProfile) await cred.user.updateProfile({displayName:display}); }catch(e){}   // keeps the name even if the profile doc is missing
+  try{ await cloudSaveStrict(); }
+  catch(e){
+    console.error("Profile save failed", e);
+    session = null; save = defaults();
+    try{ await fb.auth.signOut(); }catch(_){}
+    throw new Error("Your account was created, but we couldn’t save your profile. Please log in and try again.");
+  }
 }
 async function logInCloud(email, pw){
   let cred;
   try{ cred = await fb.auth.signInWithEmailAndPassword(email, pw); }catch(e){ throw new Error(cloudErr(e)); }
   const rec = await cloudLoad(cred.user.uid);
-  session = {name: rec ? rec.name : (email.split("@")[0] || "Player"), uid:cred.user.uid};
+  session = {name: rec ? rec.name : (cred.user.displayName || "Player"), uid:cred.user.uid};
   save = rec ? rec.save : defaults();
 }
 
@@ -1068,16 +1085,42 @@ function leaveOk(){
   // Quitting a bot duel counts as a loss, so rating can't be farmed by leaving lost games.
   if(!confirm("Leave this duel? It counts as a loss.")) return false;
   clearTimers();
-  applyResult("loss", D.bot.name, D.bot.rating, "bot");
+  pendClear();
+  applyResult("loss", D.bot.name, D.bot.rating, "bot", true);
   D = null;
   return true;
 }
-// Closing or reloading the tab mid-duel must not be a free escape from a loss.
+// A duel in progress leaves a marker in localStorage (written synchronously, so it survives a closing tab).
+// If the tab closes or crashes, the next load finds the marker and records the loss, for local and online accounts alike.
+const PEND = "quizevo.pendingDuel";
+let pendT = null;
+const pendOwner = () => (session && !session.guest) ? (session.key || session.uid || null) : null;
+function pendSet(mode, name, rating){
+  const o = pendOwner(); if(!o) return;
+  lsSet(PEND, JSON.stringify({o, mode, name, rating, alive:Date.now()}));
+  clearInterval(pendT);
+  pendT = setInterval(() => {
+    if(!D && !O){ pendClear(); return; }   // no live duel any more: never leave a stale marker behind
+    try{ const r = JSON.parse(lsGet(PEND) || "null"); if(r){ r.alive = Date.now(); lsSet(PEND, JSON.stringify(r)); } }catch(e){}
+  }, 5000);
+}
+function pendClear(){ clearInterval(pendT); pendT = null; lsDel(PEND); }
+function pendApply(){
+  const o = pendOwner(); if(!o) return;
+  let r = null; try{ r = JSON.parse(lsGet(PEND) || "null"); }catch(e){}
+  if(!r || r.o !== o) return;
+  if(Date.now() - r.alive < 15000) return;   // still running in another tab
+  lsDel(PEND);
+  applyResult("loss", r.name, r.rating, r.mode, true);
+  showToast("A duel you didn’t finish was counted as a loss.", [], 7000);
+}
+// Closing the tab mid online duel: tell the opponent. The loss itself comes from the marker above on the next load.
 addEventListener("pagehide", ev => {
   if(ev.persisted) return;   // page is only being cached for back/forward, not closed
   try{
-    if(O && !O.finished) forfeitOnline();
-    else if(D && D.bot && !PT && !Q && !MM){ clearTimers(); applyResult("loss", D.bot.name, D.bot.rating, "bot"); D = null; }
+    if(O && !O.finished && O.ref) O.ref.update({forfeit:O.me}).catch(() => {});
+    if(Q && Q.ref) Q.ref.delete().catch(() => {});                    // don't leave a ghost waiting match behind
+    if(MM && MM.ticketRef) MM.ticketRef.delete().catch(() => {});     // ...or a ghost 2v2 ticket
   }catch(e){}
 });
 function doLogout(){
@@ -1189,7 +1232,10 @@ async function getBoard(){
       let raw;
       if(boardCache && boardCache.uid === session.uid && Date.now() - boardCache.t < 180000) raw = boardCache.raw;
       else{
-        const snap = await fb.fs.collection("players").orderBy("rating","desc").limit(25).get();
+        const snap = await Promise.race([
+          fb.fs.collection("players").orderBy("rating","desc").limit(25).get(),
+          new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 8000))
+        ]);
         raw = snap.docs.map(d => ({id:d.id, name:d.data().name || "Player", rating:d.data().rating || 0}));
         boardCache = {t:Date.now(), uid:session.uid, raw};
       }
@@ -1217,6 +1263,7 @@ function startRanked(){
 }
 function showDash(){
   if(!session) return showAuth("login");
+  pendApply();
   clearTimers(); D = null; updateChip();
   const t = tierOf(save.rating);
   const nm = session.guest ? "Guest" : session.name;
@@ -1376,9 +1423,10 @@ function downloadReminder(time){
   const start = `${d.getFullYear()}${pad(d.getMonth() + 1)}${pad(d.getDate())}T${hh}${mm}00`;
   const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
   const url = shareUrl();
+  const tx = t => String(t).replace(/[\\;,]/g, m => "\\" + m), fold = l => (l.match(/.{1,73}/g) || [l]).join("\r\n ");   // RFC 5545: escape , ; and fold long lines
   const ics = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Quizerion//Daily game//EN", "BEGIN:VEVENT", `UID:daily-${Date.now()}@quizerion`, `DTSTAMP:${stamp}`,
-    `DTSTART:${start}`, "DURATION:PT15M", "RRULE:FREQ=DAILY", "SUMMARY:Play Quizerion", `DESCRIPTION:Play a game to keep your daily streak going.${url ? " " + url : ""}`,
-    "BEGIN:VALARM", "TRIGGER:PT0M", "ACTION:DISPLAY", "DESCRIPTION:Play Quizerion", "END:VALARM", "END:VEVENT", "END:VCALENDAR"].join("\r\n");
+    `DTSTART:${start}`, "DURATION:PT15M", "RRULE:FREQ=DAILY", "SUMMARY:Play Quizerion", `DESCRIPTION:${tx("Play a game to keep your daily streak going." + (url ? " " + url : ""))}`,
+    "BEGIN:VALARM", "TRIGGER:PT0M", "ACTION:DISPLAY", "DESCRIPTION:Play Quizerion", "END:VALARM", "END:VEVENT", "END:VCALENDAR"].map(fold).join("\r\n");
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([ics], {type:"text/calendar"})); a.download = "quizerion-daily-reminder.ics";
   document.body.appendChild(a); a.click(); a.remove();
@@ -1558,6 +1606,7 @@ function startDuel(botId, cat){
   let pool = fieldPool(cat);
   pool = shuffle(pool).slice(0, ROUNDS);
   D = {bot, cat, pool, i:0, hp:{you:START_HP, opp:START_HP}, correct:0, answered:0, locked:true, timer:null, auto:null};
+  pendSet("bot", bot.name, bot.rating);
 
   app.innerHTML = `
   <section class="duel">
@@ -1674,6 +1723,7 @@ function answer(idx){
 /* ---------------- Result ---------------- */
 function finish(){
   clearTimers();
+  pendClear();
   const you = D.hp.you, opp = D.hp.opp;
   const result = you > opp ? "win" : you < opp ? "loss" : "draw";
   const delta = applyResult(result, D.bot.name, D.bot.rating, "bot");
@@ -1717,14 +1767,14 @@ const errText = e => e && e.code === "permission-denied"
   : "Something went wrong. Check your connection and try again.";
 
 // The one place a duel result changes rating. Used by bot duels and online duels.
-function applyResult(result, oppName, oppRating, mode = "online"){
+function applyResult(result, oppName, oppRating, mode = "online", abandoned = false){
   const score = result === "win" ? 1 : result === "loss" ? 0 : 0.5;
   const expected = 1 / (1 + Math.pow(10, (oppRating - save.rating) / 400));
   const delta = Math.round(32 * (score - expected));
   save.rating = Math.max(100, save.rating + delta);
   save[result === "win" ? "wins" : result === "loss" ? "losses" : "draws"]++;
   save.history = [{bot:oppName, result, delta}].concat(save.history).slice(0, 8);
-  logGame({mode, title:`vs ${oppName}`, result, delta});
+  logGame({mode, title:`vs ${oppName}`, result, delta}, abandoned);   // a quit is a loss but not a finished game, so no streak
   persist(); updateChip();
   return delta;
 }
@@ -1743,7 +1793,7 @@ function newMatchData(quick, code){
   const n = Math.min(ROUNDS, QUESTIONS.length);
   const qids = shuffle(QUESTIONS.map((_, i) => i)).slice(0, n);
   const perm = qids.map(i => shuffle(QUESTIONS[i].options.map((_, j) => j)).join(""));
-  return {status:"waiting", quick, code, createdMs:Date.now(),
+  return {status:"waiting", quick, code, createdMs:Date.now(), seen:Date.now(),
     host:{uid:session.uid, name:session.name, rating:save.rating}, guest:null, qids, perm, answers:{}};
 }
 
@@ -1755,6 +1805,7 @@ async function claim(ref){
     const d = s.data();
     if(d.status !== "waiting" || d.guest) throw new Error("taken");
     if(d.host.uid === session.uid) throw new Error("own");
+    if(d.quick && Date.now() - (d.seen || 0) > 30000) throw new Error("stale");   // host is gone
     tx.update(ref, {guest:me, status:"playing"});
     return Object.assign({}, d, {guest:me, status:"playing"});
   });
@@ -1763,7 +1814,7 @@ async function claim(ref){
 function cancelWaiting(){
   const q = Q; if(!q) return; Q = null;
   if(q.unsub) q.unsub();
-  clearInterval(q.timer);
+  clearInterval(q.timer); clearInterval(q.beat);
   if(q.ref) q.ref.delete().catch(() => {});
 }
 
@@ -1823,17 +1874,18 @@ async function hostMatch(q){
   await ref.set(data);
   if(Q !== q){ ref.delete().catch(() => {}); return; }
   q.ref = ref;
+  q.beat = setInterval(() => { if(Q === q) ref.update({seen:Date.now()}).catch(() => {}); else clearInterval(q.beat); }, 10000);
   q.unsub = ref.onSnapshot(s => {
     const d = s.exists ? s.data() : null;
     if(Q === q && d && d.declined){
-      Q = null; if(q.unsub) q.unsub(); clearInterval(q.timer); ref.delete().catch(() => {});
+      Q = null; if(q.unsub) q.unsub(); clearInterval(q.timer); clearInterval(q.beat); ref.delete().catch(() => {});
       showNotice("Challenge declined", `${q.inviteName} declined your challenge.`);
       return;
     }
     if(Q === q && d && d.status === "playing" && d.guest){
       Q = null;
       if(q.unsub) q.unsub();
-      clearInterval(q.timer);
+      clearInterval(q.timer); clearInterval(q.beat);
       startOnline(ref, "host", d);
     }
   });
@@ -1844,10 +1896,11 @@ async function startQuick(){
   const q = Q = {quick:true, code:"", ref:null, t0:Date.now(), unsub:null, timer:null};
   showWaiting();
   try{
-    const snap = await fb.fs.collection("matches").where("status","==","waiting").where("quick","==",true).limit(20).get();
+    // Freshness is part of the query, so abandoned matches can never crowd out live ones. Single-field range: no extra index.
+    const snap = await fb.fs.collection("matches").where("seen",">",Date.now() - 30000).limit(30).get();
     const now = Date.now();
     const cands = snap.docs
-      .filter(d => { const x = d.data(); return x.host.uid !== session.uid && now - x.createdMs < 90000; })
+      .filter(d => { const x = d.data(); return x.status === "waiting" && x.quick === true && !x.guest && x.host && x.host.uid !== session.uid && now - (x.seen || 0) < 30000; })
       .sort((a,b) => Math.abs(a.data().host.rating - save.rating) - Math.abs(b.data().host.rating - save.rating));
     for(const c of cands){
       if(Q !== q) return;
@@ -1918,6 +1971,7 @@ function startOnline(ref, me, m){
   });
   const o = O = {ref, me, opp, m, qs, k:0, hp:{you:START_HP, opp:START_HP}, oppName:m[opp].name, oppRating:m[opp].rating,
     locked:true, resolved:-1, finished:false, correct:0, answered:0, unsub:null, timer:null, auto:null, fto:null, next:null};
+  pendSet("online", o.oppName, o.oppRating);
   app.innerHTML = `
   <section class="duel">
     <div class="side opp" id="side-opp">
@@ -2045,13 +2099,15 @@ function resolveRound(a){
 function forfeitOnline(){
   const o = O; if(!o || o.finished) return;
   o.finished = true;
+  pendClear();
   o.ref.update({forfeit:o.me}).catch(() => {});
-  applyResult("loss", o.oppName, o.oppRating);
+  applyResult("loss", o.oppName, o.oppRating, "online", true);
 }
 
 function finishOnline(reason){
   const o = O; if(!o || o.finished) return;
   o.finished = true;
+  pendClear();
   clearInterval(o.timer); clearTimeout(o.auto); clearTimeout(o.fto);
   if(o.unsub){ o.unsub(); o.unsub = null; }
   const you = o.hp.you, opp = o.hp.opp;
@@ -3291,9 +3347,13 @@ async function loadQuizzes(force){
   if(CQ_P) return CQ_P;
   CQ_P = (async () => {
     try{
-      const snap = await fcol("quizzes").orderBy("plays", "desc").limit(40).get();
+      // Most-played AND newest, so brand-new quizzes can be found. Two single-field queries: no composite index.
+      const [pop, fresh] = await Promise.all([
+        fcol("quizzes").orderBy("plays", "desc").limit(25).get(),
+        fcol("quizzes").orderBy("createdMs", "desc").limit(25).get()
+      ]);
       const next = {};
-      snap.docs.forEach(d => { const z = normQuiz(d.id, d.data()); if(z) next[d.id] = z; });
+      pop.docs.concat(fresh.docs).forEach(d => { const z = normQuiz(d.id, d.data()); if(z) next[d.id] = z; });
       Object.keys(CQ).forEach(id => { if(CQ[id].creatorUid === (session && session.uid) && !next[id]) next[id] = CQ[id]; });
       CQ = next; CQ_T = Date.now();
     }catch(e){ console.error("quizzes", e); }
@@ -3830,7 +3890,7 @@ $("home").onclick = () => { if(leaveOk()){ if(session) showDash(); else showHome
       const u = await new Promise(res => { const un = fb.auth.onAuthStateChanged(x => { un(); res(x); }); });
       if(u){
         const rec = await cloudLoad(u.uid);
-        session = {name: rec ? rec.name : ((u.email || "Player").split("@")[0]), uid:u.uid};
+        session = {name: rec ? rec.name : (u.displayName || "Player"), uid:u.uid};
         save = rec ? rec.save : defaults();
       }
     }catch(e){ console.error(e); CLOUD = false; cloudFailed = true; fb = null; cloudMsg = (e && (e.code || e.message)) || String(e); }

@@ -1,0 +1,216 @@
+rules_version = '2';
+
+// Quizerion Firestore security rules.
+//
+// HOW TO USE: Firebase console -> Firestore Database -> Rules tab -> paste this whole file -> Publish.
+//
+// WHAT THESE RULES DO
+//   - Everything requires a signed-in user. Nothing is open to the public.
+//   - You can only write your own profile, friend list entries, tickets, answers and quizzes.
+//   - Ratings cannot jump by more than 200 per save, so setting a rating to 99999 is refused.
+//   - Friend lists can only be written into with a real pending friend request.
+//
+// WHAT THEY CANNOT DO (needs Cloud Functions, i.e. a server):
+//   - Players still report their own answer times in a duel, so a determined player can fake speed.
+//   - Ratings can still be raised in steps of 200 by repeated saves. These rules slow cheating, they do not stop it.
+//   - Players documents are readable by every signed-in user (the leaderboard needs that), including game history.
+//
+// These rules were written from reading the app code and have NOT been run against the Firebase emulator.
+// Before you rely on them: Rules tab -> "Rules playground", or just try each feature with two accounts.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function uid() { return request.auth.uid; }
+    function changed() { return request.resource.data.diff(resource.data).affectedKeys(); }
+
+    // ---------------------------------------------------------------
+    // players/{uid}: public profile + progress. Anyone signed in can read (leaderboard, friend search).
+    // ---------------------------------------------------------------
+    match /players/{playerId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && uid() == playerId && validProfile(request.resource.data);
+      allow update: if signedIn() && uid() == playerId && validProfile(request.resource.data)
+                    && request.resource.data.rating <= resource.data.rating + 200
+                    && request.resource.data.rating >= resource.data.rating - 200;
+      allow delete: if false;
+
+      function validProfile(d) {
+        return d.name is string && d.name.size() >= 3 && d.name.size() <= 20
+          && d.rating is int && d.rating >= 100 && d.rating <= 4000
+          && d.wins is int && d.wins >= 0
+          && d.losses is int && d.losses >= 0
+          && d.draws is int && d.draws >= 0
+          && d.history.size() <= 8
+          && d.games.size() <= 30
+          && d.days.size() <= 60;
+      }
+    }
+
+    // ---------------------------------------------------------------
+    // users/{uid}/friends/{friendId}: your friend list.
+    // You can write your own list. Someone else can add THEMSELVES to your list only while
+    // a friend request from them to you exists (that is how "accept" works).
+    // ---------------------------------------------------------------
+    match /users/{ownerId}/friends/{friendId} {
+      allow read: if signedIn() && uid() == ownerId;
+      allow create, update: if signedIn() && (
+        uid() == ownerId ||
+        (uid() == friendId && exists(/databases/$(database)/documents/friendRequests/$(ownerId + '_' + friendId)))
+      );
+      allow delete: if signedIn() && (uid() == ownerId || uid() == friendId);
+    }
+
+    // ---------------------------------------------------------------
+    // friendRequests/{from_to}
+    // ---------------------------------------------------------------
+    match /friendRequests/{requestId} {
+      allow read: if signedIn() && (resource.data.from == uid() || resource.data.to == uid());
+      allow create: if signedIn()
+        && request.resource.data.from == uid()
+        && request.resource.data.to is string
+        && request.resource.data.to != uid()
+        && requestId == uid() + '_' + request.resource.data.to;
+      allow update: if false;
+      allow delete: if signedIn() && (resource.data.from == uid() || resource.data.to == uid());
+    }
+
+    // ---------------------------------------------------------------
+    // matches/{id}: 1v1 duels (quick match, room code, friend challenge).
+    // ---------------------------------------------------------------
+    match /matches/{matchId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.host.uid == uid();
+      allow update: if signedIn() && (
+        // the two players
+        resource.data.host.uid == uid() ||
+        (resource.data.guest != null && resource.data.guest.uid == uid()) ||
+        // joining an open match: you may only add yourself as the guest
+        (resource.data.status == 'waiting' && resource.data.guest == null
+          && request.resource.data.guest.uid == uid()
+          && request.resource.data.status == 'playing'
+          && changed().hasOnly(['guest', 'status'])) ||
+        // the invited player declining
+        (resource.data.get('inviteTo', '') == uid() && changed().hasOnly(['declined']))
+      );
+      allow delete: if signedIn() && resource.data.host.uid == uid();
+    }
+
+    // ---------------------------------------------------------------
+    // parties/{id}: party rooms and 2v2 matches. The host's browser drives the game.
+    // ---------------------------------------------------------------
+    match /parties/{partyId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.hostUid == uid();
+      allow update, delete: if signedIn() && resource.data.hostUid == uid();
+
+      // Each player writes their own entry. The party's creator may also write entries when it is created
+      // (2v2 matchmaking builds the whole party in one step). getAfter() sees the party created in the same write.
+      match /players/{playerId} {
+        allow read: if signedIn();
+        allow create: if signedIn() && (
+          uid() == playerId ||
+          getAfter(/databases/$(database)/documents/parties/$(partyId)).data.hostUid == uid()
+        );
+        allow update: if signedIn() && uid() == playerId;
+        allow delete: if signedIn() && (
+          uid() == playerId ||
+          get(/databases/$(database)/documents/parties/$(partyId)).data.hostUid == uid()
+        );
+      }
+
+      // Answer documents are named "<question>_<uid>". Only the host reads them all.
+      match /answers/{answerId} {
+        allow read: if signedIn()
+          && get(/databases/$(database)/documents/parties/$(partyId)).data.hostUid == uid();
+        allow create, update: if signedIn() && (
+          answerId.matches('.*_' + uid()) ||
+          get(/databases/$(database)/documents/parties/$(partyId)).data.hostUid == uid()   // host fills in absent players
+        );
+        allow delete: if false;
+      }
+    }
+
+    // ---------------------------------------------------------------
+    // queue2v2/{id}: matchmaking tickets (one player, or two friends together).
+    // ---------------------------------------------------------------
+    match /queue2v2/{ticketId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && uid() in request.resource.data.uids;
+      allow update: if signedIn() && (
+        uid() in resource.data.uids ||
+        // whoever builds the match claims the other tickets: waiting -> matched, nothing else changes
+        (resource.data.status == 'waiting'
+          && request.resource.data.status == 'matched'
+          && changed().hasOnly(['status', 'partyId']))
+      );
+      allow delete: if signedIn() && uid() in resource.data.uids;
+    }
+
+    // ---------------------------------------------------------------
+    // duos/{id}: a 2v2 team of two friends, before they queue.
+    // ---------------------------------------------------------------
+    match /duos/{duoId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.hostUid == uid();
+      allow update: if signedIn() && (
+        resource.data.hostUid == uid() ||
+        // a friend joining the open slot
+        (resource.data.phase == 'open' && resource.data.guestUid == ''
+          && request.resource.data.guestUid == uid()
+          && changed().hasOnly(['guestUid', 'guestName'])) ||
+        // the guest leaving
+        (resource.data.guestUid == uid()
+          && request.resource.data.guestUid == ''
+          && changed().hasOnly(['guestUid', 'guestName']))
+      );
+      allow delete: if signedIn() && resource.data.hostUid == uid();
+    }
+
+    // ---------------------------------------------------------------
+    // presence/{shard}: "N players online". Anyone signed in may update a shard, but only its "online" map.
+    // ---------------------------------------------------------------
+    match /presence/{shardId} {
+      allow read: if signedIn();
+      allow create: if signedIn() && request.resource.data.keys().hasOnly(['online']);
+      allow update: if signedIn() && changed().hasOnly(['online']);
+      allow delete: if false;
+    }
+
+    // ---------------------------------------------------------------
+    // quizzes/{id}: community quizzes.
+    // ---------------------------------------------------------------
+    match /quizzes/{quizId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && request.resource.data.creatorUid == uid()
+        && request.resource.data.title is string
+        && request.resource.data.title.size() >= 3 && request.resource.data.title.size() <= 40
+        && request.resource.data.qs.size() >= 5 && request.resource.data.qs.size() <= 30
+        && request.resource.data.plays == 0
+        && request.resource.data.players == 0;
+      allow update: if signedIn() && (
+        resource.data.creatorUid == uid() ||
+        // other players may only bump the play counters, by at most 1 each
+        (changed().hasOnly(['plays', 'players'])
+          && request.resource.data.plays >= resource.data.plays
+          && request.resource.data.plays <= resource.data.plays + 1
+          && request.resource.data.players >= resource.data.players
+          && request.resource.data.players <= resource.data.players + 1)
+      );
+      allow delete: if signedIn() && resource.data.creatorUid == uid();
+
+      match /plays/{playerId} {
+        allow read: if signedIn();
+        allow create, update: if signedIn() && uid() == playerId;
+        allow delete: if false;
+      }
+    }
+
+    // Anything not listed above is blocked.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
